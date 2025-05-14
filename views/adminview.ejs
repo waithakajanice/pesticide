@@ -1,0 +1,169 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <title>PESTICIDE SUPPLY SYSTEM | Products</title>
+  <meta charset="utf-8">
+  <link rel="stylesheet" href="css/style.css">
+  <script src="js/jquery-1.7.1.min.js"></script>
+  <script src="js/superfish.js"></script>
+  <script src="js/jquery.easing.1.3.js"></script>
+  <script src="js/tms-0.4.1.js"></script>
+  <script src="js/slider.js"></script>
+
+    <!-- Include any other scripts and stylesheets -->
+    <style>
+      * {
+    box-sizing: border-box;
+}
+
+.product-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr); /* Three products per row */
+    gap: 20px; /* Adjust spacing between products */
+}
+
+.product {
+    margin-bottom: 20px; /* Adjust vertical spacing between products */
+}
+
+.prode {
+    background-color: yellow;
+    margin-left: 9px;
+    margin-bottom: 9px;
+    border: 2px white solid;
+}
+
+.product-image img {
+    width: 100%; /* Ensure images fill their container */
+    height: auto; /* Maintain aspect ratio */
+}
+
+    </style>
+    
+</head>
+<body>
+    <div class="main-bg">
+        <!-- Header -->
+        <header>
+            <!-- Your header content -->
+            <body>
+              <div class="main-bg">
+                <!-- Header -->
+                <header>
+                  <div class="inner">
+                   <h1 style="color: black;">PESTICIDES SUPPLY SYSTEM - Agriculture company</h1>
+                    <nav>
+                      <ul class="sf-menu">
+                        <button><a href="/addproduct" style="color: black; text-decoration: none;">ADD PRODUCT</a></button>
+                        <button><li> <a href="/" style="color: black; text-decoration: none;"> LOG OUT</a></li></button> 
+                      </ul>
+                    </nav>
+                    <div class="clear"></div>
+                  </div>
+                </header>
+        </header>
+        <!-- Content -->
+        <section id="content">
+            <div class="container_24">
+                <div class="wrapper">
+                    <div class="grid_24 content-bg">
+                        <div class="wrapper">
+                            <article class="grid_22 suffix_1 prefix_1 alpha omega">
+                                <h2>Our products: </h2>
+                                <!-- Search input (if needed) -->
+                                <div class="wrapper">
+                                    <input type="text" placeholder="Search for..." id="searchinput">
+                                    <button type="button" id="searchbutton">Search</button>
+                                </div>
+                                <div class="product-grid">
+                                    <% if (products && products.length > 0) { %>
+                                        <% products.forEach(function(product) { %>
+                                            <div class="product" style="display: inline-block; margin: 15px;">
+                                                <div class="prode" style="width: 250px; height: 320px; border: 1px solid #ccc; padding: 10px; box-sizing: border-box; text-align: center;">
+                                                    <div style="margin-bottom: 10px; font-weight: bold;"><%= product.productName %></div>
+                                                    <div><strong>Product:</strong> <%= product.product %></div>
+                                                    <div><strong>Price:</strong> <%= product.price %></div>
+                                                    <div><strong>Dosage:</strong> <%= product.dosage %></div>
+                                                    <div><strong>Description:</strong> <%= product.description %></div>
+                                                    <div><strong>Target:</strong> <%= product.target %></div>
+                                                    <div><strong>Stock Remaining:</strong> <span id="quantity-<%= product.id %>"><%= product.quantity %></span></div>
+                                
+                                                    <!-- Buy button -->
+                                                    <button onclick="buyProduct('<%= product.id %>', <%= product.quantity %>)" style="padding: 5px 10px;">BUY</button>
+                                                </div>
+                                            </div>
+                                        <% }); %>
+                                    <% } else { %>
+                                        <p>No products available</p>
+                                    <% } %>
+                                </div>
+                                
+                                
+                                
+                                
+                            </article>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+    </div>
+    <script>
+        // JavaScript code for search functionality
+        
+        document.addEventListener('DOMContentLoaded', function(){
+            const searchInput = document.getElementById('searchinput');
+            const productList = document.querySelectorAll('.product');
+    
+            searchInput.addEventListener('input', function(){
+                const searchTerm = searchInput.value.trim().toLowerCase();
+    
+                productList.forEach(function(product){
+                    const productName = product.querySelector('.prode').textContent.toLowerCase();
+    
+                    if (productName.includes(searchTerm)){
+                        product.style.display = 'block';
+                    } else {
+                        product.style.display = 'none';
+                    }
+                });
+            });
+        });
+    
+    </script>
+
+<script>
+    function buyProduct(productId, availableQuantity) {
+        let quantity = prompt("Enter quantity to buy:");
+
+        if (!quantity || isNaN(quantity) || quantity <= 0) {
+            alert("Invalid quantity!");
+            return;
+        }
+
+        quantity = parseInt(quantity);
+
+        if (quantity > availableQuantity) {
+            alert("Not enough stock available!");
+            return;
+        }
+
+        fetch('/buy', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ id: productId, quantity: quantity })
+        })
+        .then(response => response.json())
+        .then(data => {
+            if (data.success) {
+                document.getElementById(`quantity-${productId}`).innerText = data.newQuantity;
+                alert("Purchase successful! Remaining quantity: " + data.newQuantity);
+            } else {
+                alert(data.message);
+            }
+        })
+        .catch(error => console.error("Error:", error));
+    }
+</script>
+</body>
+</html>

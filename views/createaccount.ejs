@@ -1,0 +1,84 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<title>PESTICIDE SUPPLY SYSTEM</title>
+
+<meta charset="utf-8">
+<link rel="stylesheet" href="css/style.css">
+<script src="js/jquery-1.7.1.min.js"></script>
+<script src="js/superfish.js"></script>
+<script src="js/jquery.easing.1.3.js"></script>
+<script src="js/tms-0.4.1.js"></script>
+<script src="js/slider.js"></script>
+<!--[if lt IE 9]>
+<script src="js/html5.js"></script>
+<link rel="stylesheet" href="css/ie.css"> 
+<![endif]-->
+</head>
+<body>
+    <div class="main-bg">
+      <!-- Header -->
+      <header>
+        <div class="inner">
+          <h1 class="images/pesticide logo.jpg"><a href="/home" style="color: black; text-decoration: none;">PESTICIDES SUPPLY SYSTEM</a></h1>
+          <nav>
+          
+              <li class="current"><a href="/">login</a></li>
+              
+            </ul>
+          </nav>
+          <div class="clear"></div>
+        </div>
+      </header>
+      <!-- Content -->
+  <section id="content">
+    <div class="container_24">
+      <div class="wrapper">
+        <div class="grid_24 content-bg">
+          <div class="wrapper">
+            <article class="grid_22 suffix_1 prefix_1 alpha omega">
+              <h2>create account:</h2>
+              <div class="wrapper indent-bot">
+                <div class="grid_7 alpha">
+                
+               
+                
+                  <form method="POST" action="/signup">
+                    <label for="fname">First name:</label><br>
+                    <input type="text" id="fname" name="fname" required><br>
+                
+                    <label for="lname">Last name:</label><br>
+                    <input type="text" id="lname" name="lname" required><br>
+                
+                    <label for="email">Email:</label><br>
+                    <input type="email" id="email" name="email" required><br>
+                
+                    <label for="pwd">Password:</label><br>
+                    <input type="password" id="pwd" name="password" minlength="4" maxlength="10" required><br>
+                
+                    <label for="confirmpwd">Confirm Password:</label><br>
+                    <input type="password" id="confirmpwd" name="pwd" minlength="4" maxlength="10" required><br>
+                
+                    <button type="submit">CREATE ACCOUNT</button> 
+                  </form>
+                
+                  <script>
+                    const form = document.querySelector('form');
+                    const passwordInput = document.getElementById('pwd');
+                    const confirmPasswordInput = document.getElementById('confirmpwd');
+                
+                    form.addEventListener('submit', function(event) {
+                      if (passwordInput.value !== confirmPasswordInput.value) {
+                        event.preventDefault(); // Prevent form submission
+                        const errorMessage = document.createElement('p');
+                        errorMessage.textContent = 'Passwords do not match.';
+                        errorMessage.style.color = 'red';
+                        form.appendChild(errorMessage);
+                      }
+                    });
+                  </script>
+          <script>
+            
+          </script>
+</body>
+</html>

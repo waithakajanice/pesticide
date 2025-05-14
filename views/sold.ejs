@@ -1,0 +1,74 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <title>PESTICIDE SUPPLY SYSTEM | sold</title>
+  <meta charset="utf-8">
+  <link rel="stylesheet" href="css/style.css">
+  <script src="js/jquery-1.7.1.min.js"></script>
+  <script src="js/superfish.js"></script>
+  <script src="js/jquery.easing.1.3.js"></script>
+  <script src="js/tms-0.4.1.js"></script>
+  <script src="js/slider.js"></script>
+ 
+    <h1 class="images/pesticide logo.jpg"><a href="/home" style="color: black; text-decoration: none;">PESTICIDES SUPPLY SYSTEM - Agriculture company</a></h1>
+    <!-- Include any other scripts and stylesheets -->
+    <style>
+        body{
+            background-color: white;
+        }
+      * {
+    box-sizing: border-box ;
+}
+
+.product-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr); /* Three products per row */
+    gap: 2px; /* Adjust spacing between products */
+}
+
+.product {
+    margin-bottom: 2px; /* Adjust vertical spacing between products */
+}
+
+.prode {
+    background-color: yellow;
+    margin-left: 2px;
+    margin-bottom: 2px;
+    border: 2px white solid;
+}
+
+.product-image img {
+    width: 100px; /* Ensure images fill their container */
+    height: 50px; /* Maintain aspect ratio */
+}
+
+    </style>
+    
+</head>
+<body> 
+    <button><li> <a href="/products" style="text-decoration: none; color: black;"> LOG OUT</a></li></button> 
+
+    <div class="product-grid">
+        <% if (sold && sold.length > 0) { %>
+            <% sold.forEach(function(buy) { %>
+                <div class="product" style="width: 250px; height: 250px; margin-bottom: 2px;">
+                    <!-- Product details -->
+                    <div class="prode">
+                        <div><%= buy.productName %>: <%= buy.product %></div>
+                        <div><%= buy.productName %>: <%= buy.price %></div>
+                        <div><%= buy.productName %>: <%= buy.dosage %></div>
+                        <div><%= buy.productName %>: <%= buy.description %></div>
+                        <div><%= buy.productName %>: <%= buy.target %></div>
+                        <!-- Product image -->
+                        <div class="product-image">
+                            <img src="<%= buy.image %>" alt="Product Image" style="width: 150px; height: 150px;">
+                        </div>
+                    </div>
+                </div>
+            <% }); %>
+        <% } else { %>
+            <p>No products available</p>
+        <% } %>
+    </div>
+</body>
+</html>
