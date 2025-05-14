@@ -17,7 +17,7 @@ body {
 	color:#f00;
 	width:50%;
 	line-height:10px;
-	font-size:10px;
+	font-size:22px;
 	margin:-220% 0 0 0;
 	overflow:hidden;
 	padding:0
@@ -99,7 +99,7 @@ h5 {
 	line-height:30px;
 }
 h6 {
-	font-size:20px;
+	font-size:22px;;
 	line-height:24px;
 }
 .heading-1 {
@@ -111,7 +111,7 @@ h6 {
 }
 .def-list-1 dt {
 	display:block;
-	font-size:12px;
+	font-size:22px;;
 	line-height:18px;
 	padding:0 0 6px 0;
 	color:#b09609;
@@ -125,7 +125,7 @@ h6 {
 	text-decoration:underline;
 }
 .quote {
-	font-size:12px;
+	font-size:22px;;
 	line-height:20px;
 	font-style:italic;
 	position:relative;
@@ -188,7 +188,7 @@ strong {
 .banner-box h4 {
 	font-family: 'Open Sans', sans-serif;
 	text-transform:uppercase;
-	font-size:21px;
+	font-size:22px;;
 	line-height:26px;
 	margin:-5px 0 0 0;
 	font-weight:300;
@@ -265,7 +265,7 @@ p {
 }
 .list-1 li a {
 	color:#717171;
-	font-size:14px;
+	font-size:22px;;;
 	line-height:20px;
 	padding:5px 0 6px;
 	text-decoration:none;
@@ -284,7 +284,7 @@ a:hover {
 }
 .button {
 	display:inline-block;
-	font-size:12px;
+	font-size:22px;;
 	color:#fff;
 	text-decoration: underline;
 	background:url(../images/link-marker.gif) no-repeat right 7px;
@@ -438,7 +438,7 @@ nav {
 	text-decoration:none;
 	display:block;
 	font-family: 'Open Sans', sans-serif;
-	font-size:14px;
+	font-size:22px;;;
 	line-height:18px;
 	text-transform:uppercase;
 	color:#fff;
@@ -466,7 +466,7 @@ nav {
 	margin:0;
 	position:relative;
 	text-decoration:none;
-	font-size:12px;
+	font-size:22px;;
 	line-height:14px;
 	color:#fff;
 	overflow:hidden;
@@ -505,7 +505,7 @@ section#content {
 	display:inline-block;
 	font-family: 'Open Sans', sans-serif;
 	color:#fff;
-	font-size:14px;
+	font-size:22px;;;
 	line-height:20px;
 	font-weight:bold;
 }
@@ -522,7 +522,7 @@ section#content {
 }
 .price-list li {
 	overflow:hidden;
-	font-size:14px;
+	font-size:22px;;;
 	line-height:18px;
 	padding:0 0 12px 14px;
 	background:url(../images/list-1-marker.gif) no-repeat 0 5px;
@@ -546,8 +546,9 @@ section#content {
 .price-list li .price {
 	float:right;
 	margin:0 0 0 6px;
-	width:60px;
+	width:fit-content;
 	text-align:left;
+	text-wrap: nowrap;
 	color:#b30404;
 }
 .adress {
@@ -557,12 +558,12 @@ section#content {
 	display:block;
 	font-weight:normal;
 	color:#717171;
-	font-size:12px;
+	font-size:22px;;
 	line-height:18px;
 	width:235px;
 }
 .adress dd {
-	font-size:12px;
+	font-size:22px;;
 	line-height:18px;
 	color:#717171;
 	overflow:hidden;
@@ -576,7 +577,7 @@ section#content {
 /******************** Footer ******************/
 footer {
 	color:#717171;
-	font-size:12px;
+	font-size:22px;;
 }
 .footer-bg {
 	background:url(../images/body-bg.gif);
@@ -599,7 +600,7 @@ footer a {
 }
 .footer-list li {
 	background:url(../images/list-1-marker.gif) no-repeat 0 6px;
-	font-size:12px;
+	font-size:22px;;
 	line-height:18px;
 	padding:0 0 10px 14px;
 }

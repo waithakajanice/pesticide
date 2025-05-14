@@ -18,7 +18,7 @@
 }
 #contact-form input {
 	width:499px;
-	font-size:12px;
+	font-size:22px;
 	padding:5px 5px 6px 5px !important;
 	background:#2f2f2f;
 	outline:none;
@@ -33,7 +33,7 @@
 }
 #contact-form textarea {
 	width:499px;
-	font-size:12px;
+	font-size:22px;
 	padding:5px 5px 6px 5px !important;
 	background:#2f2f2f;
 	outline:none;

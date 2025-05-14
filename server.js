@@ -198,15 +198,14 @@ app.get('/contacts', (req, res) => {
     res.render("contacts.ejs");
 });
 
-app.get('/pricing', (req, res) => {
-    fetchProductsFromDB()
-    .then(products => {
-        res.render("pricing.ejs");
-    })
-    .catch(error => {
+app.get('/pricing', async (req, res) => {
+    try {
+        const products = await fetchProductsFromDB();
+        res.render("pricing.ejs", { products });
+    } catch (error) {
         console.error('Error fetching products:', error);
-    });
-    
+        res.status(500).send('Error loading pricing page');
+    }
 });
 
 app.get('/pay', (req, res) => {

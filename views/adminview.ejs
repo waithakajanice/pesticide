@@ -157,7 +157,7 @@
         .then(data => {
             if (data.success) {
                 document.getElementById(`quantity-${productId}`).innerText = data.newQuantity;
-                alert("Purchase successful! Remaining quantity: " + data.newQuantity);
+                alert("Purchase successful! Stock Remaining: " + data.newQuantity);
             } else {
                 alert(data.message);
             }
