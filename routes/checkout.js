@@ -44,11 +44,17 @@ router.post('/submit', async (req, res) => {
     // Save order to the database (pseudo code)
     // pool.query('INSERT INTO orders SET ?', orderDetails, (err, result) => { ... });
 
+    // Make a copy of the cart before clearing
+    const purchasedItems = [...cart];
+
     // Clear the cart after successful order submission
     req.session.cart = [];
 
+    // Calculate total
+    const total = purchasedItems.reduce((sum, item) => sum + (item.price * item.quantity), 0);
+
     // Render the receipt page
-    res.render('receipt.ejs', { orderDetails });
+    res.render('receipt.ejs', { items: purchasedItems, total });
 });
 
 export default router;

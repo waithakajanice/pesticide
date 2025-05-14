@@ -1,5 +1,4 @@
-// filepath: c:\Users\bonuk\Downloads\pesticides\server.js
-import mysql from 'mysql2';
+import mysql from 'mysql2/promise';
 import express, { json } from "express";
 import cors from "cors";
 import path from "path";
