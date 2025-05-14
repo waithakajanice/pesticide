@@ -1,0 +1,29 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Receipt - Pesticide Supply System</title>
+    <link rel="stylesheet" href="/css/cart.css">
+</head>
+<body>
+    <div class="receipt-container">
+        <h1>Receipt</h1>
+        <p>Thank you for your purchase!</p>
+        <div class="receipt-details">
+            <h2>Order Summary</h2>
+            <ul>
+                <% items.forEach(item => { %>
+                    <li>
+                        <strong>Product:</strong> <%= item.product %> <br>
+                        <strong>Quantity:</strong> <%= item.quantity %> <br>
+                        <strong>Price:</strong> $<%= item.price.toFixed(2) %> <br>
+                    </li>
+                <% }); %>
+            </ul>
+            <h3>Total: $<%= total.toFixed(2) %></h3>
+        </div>
+        <button onclick="window.print()">Download Receipt</button>
+    </div>
+</body>
+</html>

@@ -1,4 +1,4 @@
-// Import required modules
+// filepath: c:\Users\bonuk\Downloads\pesticides\server.js
 import mysql from 'mysql2';
 import express, { json } from "express";
 import cors from "cors";
@@ -11,6 +11,9 @@ import fs from 'fs';
 import admin from 'firebase-admin';
 import { initializeApp } from "firebase/app";
 import { getStorage, ref } from "firebase/storage";
+import cartRoutes from './routes/cart.js';
+import checkoutRoutes from './routes/checkout.js';
+import session from 'express-session';
 
 // Firebase configuration and initialization
 const firebaseConfig = {
@@ -40,6 +43,13 @@ app.use(express.static('uploads'));
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 app.set('view engine', 'ejs');
+
+app.use(session({
+    secret: 'your-secret-key', // use a strong secret in production
+    resave: false,
+    saveUninitialized: true,
+    cookie: { secure: false } // set to true if using HTTPS
+}));
 
 // MySQL database connection pool setup
 const pool = mysql.createPool({
@@ -271,6 +281,10 @@ app.get('/viewreviews', (req, res) => {
         res.render("viewreviews.ejs", { reviews });
     });
 });
+
+// Shopping cart and checkout routes
+app.use('/cart', cartRoutes);
+app.use('/checkout', checkoutRoutes);
 
 // Route handlers for form submissions
 app.post("/addProduct", (req, res) => {
