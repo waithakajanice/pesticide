@@ -1,35 +1,55 @@
 import mysql from 'mysql2/promise';
-import express, { json } from "express";
+import express from "express";
 import cors from "cors";
 import path from "path";
-import bodyParser from "body-parser";
 import { log } from "console";
 import multer from "multer";
 import fileUpload from 'express-fileupload';
 import fs from 'fs';
 import admin from 'firebase-admin';
 import { initializeApp } from "firebase/app";
-import { getStorage, ref } from "firebase/storage";
+import { getStorage } from "firebase/storage";
 import cartRoutes from './routes/cart.js';
 import checkoutRoutes from './routes/checkout.js';
 import session from 'express-session';
+import dotenv from 'dotenv';
+
+// Load environment variables from .env file
+dotenv.config();
+
+// Verify required environment variables are set
+const requiredEnvVars = [
+  'DB_HOST', 'DB_USER', 'DB_PASSWORD', 'DB_NAME',
+  'FIREBASE_API_KEY', 'FIREBASE_AUTH_DOMAIN', 'FIREBASE_PROJECT_ID',
+  'FIREBASE_STORAGE_BUCKET', 'FIREBASE_MESSAGING_SENDER_ID',
+  'FIREBASE_APP_ID', 'FIREBASE_MEASUREMENT_ID',
+  'SESSION_SECRET'
+];
+
+for (const envVar of requiredEnvVars) {
+  if (!process.env[envVar]) {
+    throw new Error(`Missing required environment variable: ${envVar}`);
+  }
+}
 
 // Firebase configuration and initialization
 const firebaseConfig = {
-    apiKey: "AIzaSyCCqn6ectArvQ_zUvN1fSm1_QSAuooapLo",
-    authDomain: "pesticide-supply.firebaseapp.com",
-    projectId: "pesticide-supply",
-    storageBucket: "pesticide-supply.appspot.com",
-    messagingSenderId: "1076388899331",
-    appId: "1:1076388899331:web:6760fb0fa8c7feb0a0bc36",
-    measurementId: "G-MJSF72TR6M"
+  apiKey: process.env.FIREBASE_API_KEY,
+  authDomain: process.env.FIREBASE_AUTH_DOMAIN,
+  projectId: process.env.FIREBASE_PROJECT_ID,
+  storageBucket: process.env.FIREBASE_STORAGE_BUCKET,
+  messagingSenderId: process.env.FIREBASE_MESSAGING_SENDER_ID,
+  appId: process.env.FIREBASE_APP_ID,
+  measurementId: process.env.FIREBASE_MEASUREMENT_ID
 };
 
 const firebaseApp = initializeApp(firebaseConfig);
 const appStorage = getStorage();
 
-// Express app setup and middleware configuration
+// Express app setup
 const app = express();
+
+// Middleware configuration
 app.use(express.static('public'));
 app.use(cors());
 app.use(express.json());
@@ -39,246 +59,229 @@ app.use(express.static(path.join(__dirname, 'public')));
 app.use(fileUpload());
 app.use(express.static(path.join(__dirname, 'uploads')));
 app.use(express.static('uploads'));
-app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 app.set('view engine', 'ejs');
 
+// Session configuration
 app.use(session({
-    secret: 'your-secret-key', // use a strong secret in production
-    resave: false,
-    saveUninitialized: true,
-    cookie: { secure: false } // set to true if using HTTPS
+  secret: process.env.SESSION_SECRET,
+  resave: false,
+  saveUninitialized: true,
+  cookie: { 
+    secure: process.env.SESSION_SECURE_COOKIE === 'true',
+    httpOnly: true,
+    maxAge: 24 * 60 * 60 * 1000 // 24 hours
+  }
 }));
 
-// MySQL database connection pool setup
+// MySQL database connection pool
 const pool = mysql.createPool({
-    host: 'localhost',
-    user: 'api',
-    password: '1234',
-    database: 'pesticide',
-    connectionLimit: 10,
-    queueLimit: 0
+  host: process.env.DB_HOST,
+  user: process.env.DB_USER,
+  password: process.env.DB_PASSWORD,
+  database: process.env.DB_NAME,
+  connectionLimit: parseInt(process.env.DB_CONNECTION_LIMIT) || 10,
+  queueLimit: 0
 });
 
 export default pool;
 
 // Multer configuration for file uploads
 const storage = multer.diskStorage({
-    destination: (req, file, cb) => {
-        cb(null, 'public/images');
-    },
-    filename: (req, file, cb) => {
-        cb(null, file.fieldname + "_" + Date.now() + path.extname(file.originalname));
-    }
+  destination: (req, file, cb) => {
+    cb(null, 'public/images');
+  },
+  filename: (req, file, cb) => {
+    cb(null, file.fieldname + "_" + Date.now() + path.extname(file.originalname));
+  }
 });
 
 const upload = multer({ storage: storage });
 
-// Database connection helper functions
+// Database connection helper
 const connection = () => {
-    return new Promise((resolve, reject) => {
-        pool.getConnection((err, connection) => {
+  return new Promise((resolve, reject) => {
+    pool.getConnection((err, connection) => {
+      if (err) reject(err);
+      log("MySQL pool connected");
+      const query = (sql, binding) => {
+        return new Promise((resolve, reject) => {
+          connection.query(sql, binding, (err, result) => {
             if (err) reject(err);
-            console.log("MySQL pool connected ");
-            const query = (sql, binding) => {
-                return new Promise((resolve, reject) => {
-                    connection.query(sql, binding, (err, result) => {
-                        if (err) reject(err);
-                        resolve(result);
-                    });
-                });
-            };
-            const release = () => {
-                return new Promise((resolve, reject) => {
-                    if (err) reject(err);
-                    console.log("MySQL pool released");
-                    resolve(connection.release());
-                });
-            };
-            resolve({ query, release });
+            resolve(result);
+          });
         });
+      };
+      const release = () => {
+        return new Promise((resolve, reject) => {
+          if (err) reject(err);
+          log("MySQL pool released");
+          resolve(connection.release());
+        });
+      };
+      resolve({ query, release });
     });
+  });
 };
 
 const query = (sql, binding) => {
-    return new Promise((resolve, reject) => {
-        pool.query(sql, binding, (err, result, fields) => {
-            if (err) reject(err);
-            resolve(result);
-        });
+  return new Promise((resolve, reject) => {
+    pool.query(sql, binding, (err, result, fields) => {
+      if (err) reject(err);
+      resolve(result);
     });
+  });
 };
 
 // Data fetching functions
-function fetchProducts(callback) {
-    const sql = 'SELECT * FROM products';
-    pool.query(sql, (error, results) => {
-        if (error) return callback(error, null);
-        callback(null, results);
-    });
+async function fetchProducts() {
+  const sql = 'SELECT * FROM products';
+  const [results] = await pool.query(sql);
+  return results;
 }
 
-function fetchReviews(callback) {
-    const query = 'SELECT * FROM reviews';
-    connection()
-        .then(conn => {
-            conn.query(query, (error, results) => {
-                if (error) {
-                    callback(error, null);
-                    return;
-                }
-                callback(null, results);
-                conn.release();
-            });
-        })
-        .catch(error => {
-            callback(error, null);
-        });
+async function fetchReviews() {
+  const sql = 'SELECT * FROM reviews';
+  const [results] = await pool.query(sql);
+  return results;
 }
 
-function fetchSold(callback) {
-    const sql = 'SELECT * FROM sold';
-    pool.query(sql, (error, results) => {
-        if (error) return callback(error, null);
-        callback(null, results);
-    });
+async function fetchSold() {
+  const sql = 'SELECT * FROM sold';
+  const [results] = await pool.query(sql);
+  return results;
 }
 
 const fetchProductsFromDB = () => {
-    return new Promise((resolve, reject) => {
-        const sql = "SELECT * FROM products";
-        pool.query(sql, (err, results) => {
-            if (err) {
-                console.error('Error fetching products from MySQL: ', err);
-                reject(err);
-            } else {
-                const products = results.map(product => {
-                    return {
-                        id: product.id,
-                        product: product.product,
-                        price: product.price,
-                        dosage: product.dosage,
-                        description: product.description,
-                        target: product.target,
-                        quantity: product.quantity
-                    };
-                });
-                resolve(products);
-            }
+  return new Promise((resolve, reject) => {
+    const sql = "SELECT * FROM products";
+    pool.promise().query(sql)
+      .then(([results]) => {
+        const products = results.map(product => {
+          return {
+            id: product.id,
+            product: product.product,
+            price: product.price,
+            dosage: product.dosage,
+            description: product.description,
+            target: product.target,
+            quantity: product.quantity
+          };
         });
-    });
+        resolve(products);
+      })
+      .catch(err => {
+        console.error('Error fetching products from MySQL: ', err);
+        reject(err);
+      });
+  });
 };
 
 // Authentication functions
-const signIn = async (email, password) => new Promise(async (resolve, reject) => {
-    const conn = await connection();
-    try {
-        console.log("Siging in...");
-        const sql = ("SELECT * FROM login WHERE `email` = ? AND `password` = ?");
-        let user = await conn.query(sql, [email, password]);
-
-        return user[0] ? resolve("Success") : resolve("");
-    } catch {
-        return reject("");
-    } finally {
-        await conn.release();
-    }
-});
+const signIn = async (email, password) => {
+  try {
+    console.log("Signing in...");
+    const sql = "SELECT * FROM login WHERE `email` = ? AND `password` = ?";
+    const [rows] = await pool.query(sql, [email, password]);
+    return rows.length > 0 ? "Success" : "";
+  } catch (err) {
+    console.error("Login error:", err);
+    throw err;
+  }
+};
 
 // Route handlers for views
 app.get('/', (req, res) => {
-    res.render("index.ejs");
+  res.render("index.ejs");
 });
 
 app.get('/createaccount', (req, res) => {
-    const error = req.query.error ? req.query.error : null;
-    res.render('createaccount', { error: error });
+  const error = req.query.error ? req.query.error : null;
+  res.render('createaccount', { error: error });
 });
 
 app.get('/home', (req, res) => {
-    res.render("home.ejs");
+  res.render("home.ejs");
 });
 
 app.get('/admin', (req, res) => {
-    res.render("admin.ejs");
+  res.render("admin.ejs");
 });
 
 app.get('/contacts', (req, res) => {
-    res.render("contacts.ejs");
+  res.render("contacts.ejs");
 });
 
 app.get('/pricing', async (req, res) => {
-    try {
-        const products = await fetchProductsFromDB();
-        res.render("pricing.ejs", { products });
-    } catch (error) {
-        console.error('Error fetching products:', error);
-        res.status(500).send('Error loading pricing page');
-    }
+  try {
+    const products = await fetchProductsFromDB();
+    res.render("pricing.ejs", { products });
+  } catch (error) {
+    console.error('Error fetching products:', error);
+    res.status(500).send('Error loading pricing page');
+  }
 });
 
 app.get('/pay', (req, res) => {
-    res.render("pay.ejs");
+  res.render("pay.ejs");
 });
 
-app.get('/products', (req, res) => {
-    fetchProducts((error, products) => {
-        if (error) {
-            res.status(500).send('Error fetching products');
-            return;
-        }
-        res.render('products', { products });
-    });
+app.get('/products', async (req, res) => {
+  try {
+    const products = await fetchProducts();
+    res.render('products', { products });
+  } catch (error) {
+    res.status(500).send('Error fetching products');
+  }
 });
 
 app.get('/adminview', (req, res) => {
-    fetchProducts((error, products) => {
-        if (error) {
-            res.status(500).send('Error fetching products');
-            return;
-        }
-        res.render('adminview', { products });
-    });
+  fetchProducts((error, products) => {
+    if (error) {
+      res.status(500).send('Error fetching products');
+      return;
+    }
+    res.render('adminview', { products });
+  });
 });
 
-app.get('/reviews', (req, res) => {
-    fetchReviews((error, reviews) => {
-        if (error) {
-            res.status(500).send('Error fetching reviews');
-            return;
-        }
-        res.render('reviews', { reviews });
-    });
+app.get('/reviews', async (req, res) => {
+  try {
+    const reviews = await fetchReviews();
+    res.render('reviews', { reviews });
+  } catch (error) {
+    res.status(500).send('Error fetching reviews');
+  }
 });
 
 app.get('/addproduct', (req, res) => {
-    fetchReviews((error, reviews) => {
-        if (error) {
-            res.status(500).send('Error fetching reviews');
-            return;
-        }
-        res.render("addproduct.ejs", { reviews });
-    });
+  fetchReviews((error, reviews) => {
+    if (error) {
+      res.status(500).send('Error fetching reviews');
+      return;
+    }
+    res.render("addproduct.ejs", { reviews });
+  });
 });
 
 app.get("/sold", (req, res) => {
-    fetchSold((error, sold) => {
-        if (error) {
-            res.status(500).send('Error fetching sold');
-            return;
-        }
-        res.render("sold.ejs", { sold });
-    });
+  fetchSold((error, sold) => {
+    if (error) {
+      res.status(500).send('Error fetching sold');
+      return;
+    }
+    res.render("sold.ejs", { sold });
+  });
 });
 
 app.get('/viewreviews', (req, res) => {
-    fetchReviews((error, reviews) => {
-        if (error) {
-            res.status(500).send('Error fetching reviews');
-            return;
-        }
-        res.render("viewreviews.ejs", { reviews });
-    });
+  fetchReviews((error, reviews) => {
+    if (error) {
+      res.status(500).send('Error fetching reviews');
+      return;
+    }
+    res.render("viewreviews.ejs", { reviews });
+  });
 });
 
 // Shopping cart and checkout routes
@@ -287,153 +290,155 @@ app.use('/checkout', checkoutRoutes);
 
 // Route handlers for form submissions
 app.post("/addProduct", (req, res) => {
-    const { product, price, dosage, target, description, quantity } = req.body;
+  const { product, price, dosage, target, description, quantity } = req.body;
 
-    if (!product || !price || !dosage || !target || !description || !quantity) {
-        return res.status(400).send("All fields are required.");
+  if (!product || !price || !dosage || !target || !description || !quantity) {
+    return res.status(400).send("All fields are required.");
+  }
+
+  const sql = `
+    INSERT INTO products (product, price, dosage, target, description, quantity) 
+    VALUES (?, ?, ?, ?, ?, ?)
+  `;
+
+  pool.query(sql, [product, price, dosage, target, description, quantity], (err, result) => {
+    if (err) {
+      console.error("Error inserting data into MySQL:", err.sqlMessage || err);
+      return res.status(500).send("Error inserting data into MySQL.");
     }
-
-    const sql = `
-        INSERT INTO products (product, price, dosage, target, description, quantity) 
-        VALUES (?, ?, ?, ?, ?, ?)
-    `;
-
-    pool.query(sql, [product, price, dosage, target, description, quantity], (err, result) => {
-        if (err) {
-            console.error("Error inserting data into MySQL:", err.sqlMessage || err);
-            return res.status(500).send("Error inserting data into MySQL.");
-        }
-        console.log("Product added successfully:");
-        res.redirect("/products");
-    });
+    console.log("Product added successfully:");
+    res.redirect("/products");
+  });
 });
 
 app.post('/signup', (req, res) => {
-    const sql = "INSERT INTO login (fname, lname, email, password, pwd) VALUES(?, ?, ?, ?, ?)";
-    const values = [
-        req.body.fname,
-        req.body.lname,
-        req.body.email,
-        req.body.password,
-        req.body.pwd
-    ];
+  const sql = "INSERT INTO login (fname, lname, email, password, pwd) VALUES(?, ?, ?, ?, ?)";
+  const values = [
+    req.body.fname,
+    req.body.lname,
+    req.body.email,
+    req.body.password,
+    req.body.pwd
+  ];
 
-    pool.query(sql, values, (err, data) => {
-        if (err) {
-            console.error('Error inserting data into MySQL:', err);
-            res.status(500).send('Error inserting data into MySQL');
-            return;
-        }
-        
-        console.log("Account created successfully!");
-        res.redirect("/");
-    });
+  pool.query(sql, values, (err, data) => {
+    if (err) {
+      console.error('Error inserting data into MySQL:', err);
+      res.status(500).send('Error inserting data into MySQL');
+      return;
+    }
+    
+    console.log("Account created successfully!");
+    res.redirect("/");
+  });
 });
 
 app.post('/login', (req, res) => {
-    signIn(req.body.email, req.body.password)
-        .then((result) => {
-            if (result)
-                res.status(200).redirect("/home");
-            else
-                res.status(200).send(`Check password for ${req.body.email}`);
-        })
-        .catch((e) => {
-            res.status(500).send("Could not sign in");
-        });
+  signIn(req.body.email, req.body.password)
+    .then((result) => {
+      if (result)
+        res.status(200).redirect("/home");
+      else
+        res.status(200).send(`Check password for ${req.body.email}`);
+    })
+    .catch((e) => {
+      res.status(500).send("Could not sign in");
+    });
 });
 
 app.post("/admin", (req, res) => {
-    const enteredName = req.body.name;
-    const enteredPassword = req.body.password;
+  const enteredName = req.body.name;
+  const enteredPassword = req.body.password;
 
-    const sql = "SELECT * FROM admin WHERE name = ? AND password = ?";
-    const values = [enteredName, enteredPassword];
+  const sql = "SELECT * FROM admin WHERE name = ? AND password = ?";
+  const values = [enteredName, enteredPassword];
 
-    pool.query(sql, values, (err, results) => {
-        if (err) {
-            console.error('Error querying MySQL: ', err);
-            res.status(500).send('Error querying MySQL');
-            return;
-        }
+  pool.query(sql, values, (err, results) => {
+    if (err) {
+      console.error('Error querying MySQL: ', err);
+      res.status(500).send('Error querying MySQL');
+      return;
+    }
 
-        if (results.length > 0) {
-            res.redirect("/adminview");
-        } else {
-            res.render('admin', { error: 'Invalid username or password' });
-        }
-    });
+    if (results.length > 0) {
+      res.redirect("/adminview");
+    } else {
+      res.render('admin', { error: 'Invalid username or password' });
+    }
+  });
 });
 
 app.post("/remove", (req, res) => {
-    const id = req.body.id;
-    pool.query("DELETE FROM products WHERE id = ?", [id], (err, result) => {
-        if (err) {
-            console.error('Error deleting product:', err);
-            res.status(500).send('Error deleting product');
-            return;
-        }
-        res.redirect("/adminview");
-    });
+  const id = req.body.id;
+  pool.query("DELETE FROM products WHERE id = ?", [id], (err, result) => {
+    if (err) {
+      console.error('Error deleting product:', err);
+      res.status(500).send('Error deleting product');
+      return;
+    }
+    res.redirect("/adminview");
+  });
 });
 
 app.post('/buy', (req, res) => {
-    const { id, quantity } = req.body;
+  const { id, quantity } = req.body;
 
-    if (!id || !quantity) {
-        return res.json({ success: false, message: 'Invalid request data' });
+  if (!id || !quantity) {
+    return res.json({ success: false, message: 'Invalid request data' });
+  }
+
+  pool.query('SELECT quantity FROM products WHERE id = ?', [id], (err, result) => {
+    if (err) {
+      console.log(err)
+      return res.json({ success: false, message: 'Database error' });
+    }
+    if (result.length === 0) {
+      return res.json({ success: false, message: 'Product not found' });
     }
 
-    pool.query('SELECT quantity FROM products WHERE id = ?', [id], (err, result) => {
-        if (err) {
-            console.log(err)
-            return res.json({ success: false, message: 'Database error' });
-        }
-        if (result.length === 0) {
-            return res.json({ success: false, message: 'Product not found' });
-        }
+    let availableQuantity = result[0].quantity;
 
-        let availableQuantity = result[0].quantity;
+    if (quantity > availableQuantity) {
+      return res.json({ success: false, message: 'Not enough stock available!' });
+    }
 
-        if (quantity > availableQuantity) {
-            return res.json({ success: false, message: 'Not enough stock available!' });
-        }
+    let newQuantity = availableQuantity - quantity;
 
-        let newQuantity = availableQuantity - quantity;
-
-        pool.query('UPDATE products SET quantity = ? WHERE id = ?', [newQuantity, id], (err, updateResult) => {
-            if (err) {
-                return res.json({ success: false, message: 'Database update error' });
-            }
-            res.json({ success: true, newQuantity });
-        });
+    pool.query('UPDATE products SET quantity = ? WHERE id = ?', [newQuantity, id], (err, updateResult) => {
+      if (err) {
+        return res.json({ success: false, message: 'Database update error' });
+      }
+      res.json({ success: true, newQuantity });
     });
+  });
 });
 
 app.post("/reviews", (req, res) => {
-    const sql = "INSERT INTO reviews (`name`, `message` ) VALUES(?,?)";
-    const values = [
-        req.body.name,
-        req.body.message
-    ];
+  const sql = "INSERT INTO reviews (`name`, `message` ) VALUES(?,?)";
+  const values = [
+    req.body.name,
+    req.body.message
+  ];
 
-    pool.query(sql, values, (err, data) => {
-        if (err) {
-            console.error('Error inserting data into MySQL: ', err);
-            res.status(500).send('Error inserting data into MySQL');
-            return;
-        } else {
-            res.redirect("/reviews");
-        }
-    });
+  pool.query(sql, values, (err, data) => {
+    if (err) {
+      console.error('Error inserting data into MySQL: ', err);
+      res.status(500).send('Error inserting data into MySQL');
+      return;
+    } else {
+      res.redirect("/reviews");
+    }
+  });
 });
 
 // Server startup function
-function startServer(port = 3000) {
-    app.listen(port, () => {
-        const now = new Date().toLocaleString();
-        console.log(`[${now}] ✅ Server started and running on http://localhost:${port}`);
-    });
+function startServer() {
+  const port = process.env.PORT || 3000;
+  app.listen(port, () => {
+    const now = new Date().toLocaleString();
+    log(`[${now}] ✅ Server running on http://localhost:${port}`);
+    log(`Environment: ${process.env.NODE_ENV || 'development'}`);
+  });
 }
 
 startServer();
