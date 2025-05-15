@@ -1,0 +1,59 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>My Invoices - Pesticide Supply System</title>
+  <link rel="stylesheet" href="/css/style.css" />
+</head>
+<body>
+  <div class="main-bg">
+    <header class="main-header">
+      <div class="header-inner header-inner-centered">
+        <h1 class="company-logo">
+          <a href="/home" class="company-logo-link">PESTICIDES SUPPLY SYSTEM</a>
+        </h1>
+        <nav class="main-navigation nav-centered">
+          <ul class="nav-list">
+            <li class="nav-item"><a href="/home" class="nav-link">Home</a></li>
+            <li class="nav-item"><a href="/products" class="nav-link">Products</a></li>
+            <li class="nav-item"><a href="/cart" class="nav-link">Cart</a></li>
+            <li class="nav-item active"><a href="/invoices" class="nav-link">My Invoices</a></li>
+            <li class="nav-item"><a href="/pricing" class="nav-link">Pricing</a></li>
+            <li class="nav-item"><a href="/contacts" class="nav-link">Contacts</a></li>
+            <li class="nav-item"><a href="/reviews" class="nav-link">Reviews</a></li>
+            <li class="nav-item"><a href="/" class="nav-link logout-link">Log Out</a></li>
+        </ul>
+        </nav>
+      </div>
+    </header>
+
+    <section class="invoices-section">
+      <h2>My Invoices</h2>
+      <% if (orders && orders.length > 0) { %>
+        <table class="invoices-table">
+          <thead>
+            <tr>
+              <th>Order ID</th>
+              <th>Date</th>
+              <th>Total</th>
+              <th>View</th>
+            </tr>
+          </thead>
+          <tbody>
+            <% orders.forEach(order => { %>
+              <tr>
+                <td><%= order.id %></td>
+                <td><%= order.created_at ? order.created_at.toLocaleString ? order.created_at.toLocaleString() : order.created_at : '' %></td>
+                <td>$<%= Number(order.total).toFixed(2) %></td>
+                <td><a href="/invoice/<%= order.id %>" class="view-invoice-link">View Invoice</a></td>
+              </tr>
+            <% }); %>
+          </tbody>
+        </table>
+      <% } else { %>
+        <p class="no-invoices">You have no invoices yet.</p>
+      <% } %>
+    </section>
+  </div>
+</body>
+</html>

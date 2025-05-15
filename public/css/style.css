@@ -26,11 +26,19 @@ header, .main-header, .header-section {
   padding: 1.2em 0;
 }
 
+.header-inner-centered {
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+}
+
 .company-logo {
   font-size: 1.5em;
   font-weight: bold;
   letter-spacing: 1px;
   margin: 0;
+  margin-bottom: 0.7em;
 }
 
 .company-logo-link {
@@ -56,8 +64,18 @@ header, .main-header, .header-section {
   padding: 0;
 }
 
+.nav-list {
+  justify-content: center;
+}
+
 .nav-item {
   margin: 0;
+}
+
+.nav-centered {
+  width: 100%;
+  display: flex;
+  justify-content: center;
 }
 
 /* Navigation links */
@@ -939,6 +957,62 @@ button.no-print {
 
 button.no-print:hover {
   background: #205820;
+}
+
+/* Invoices Table Styles */
+.invoices-section {
+  max-width: 900px;
+  margin: 2em auto;
+  background: #f3f9f3;
+  border-radius: 10px;
+  box-shadow: 0 2px 12px rgba(43,122,43,0.07);
+  padding: 2em 2.5em 2em 2.5em;
+}
+
+.invoices-section h2 {
+  text-align: center;
+  color: #2b7a2b;
+  margin-bottom: 1.5em;
+}
+
+.invoices-table {
+  width: 100%;
+  border-collapse: collapse;
+  background: #fff;
+  border-radius: 8px;
+  overflow: hidden;
+  box-shadow: 0 1px 6px rgba(43,122,43,0.05);
+}
+
+.invoices-table th, .invoices-table td {
+  padding: 1em;
+  text-align: left;
+}
+
+.invoices-table th {
+  background: #2b7a2b;
+  color: #fff;
+}
+
+.invoices-table tr:nth-child(even) {
+  background: #f7f7f7;
+}
+
+.view-invoice-link {
+  color: #2b7a2b;
+  text-decoration: underline;
+  font-weight: 500;
+}
+
+.view-invoice-link:hover {
+  color: #205820;
+}
+
+.no-invoices {
+  text-align: center;
+  color: #d90429;
+  font-size: 1.1em;
+  margin-top: 2em;
 }
 
 /* Footer styling */

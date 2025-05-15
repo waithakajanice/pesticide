@@ -54,7 +54,7 @@ router.post('/submit', async (req, res) => {
     const stockMap = {};
     products.forEach(p => {
         priceMap[p.id] = Number(p.price);
-        stockMap[p.id] = Number(p.stock);
+        stockMap[p.id] = Number(p.quantity); // Use quantity for stock
     });
 
     // Check stock availability
@@ -118,7 +118,21 @@ router.get('/invoice/:orderId', async (req, res) => {
     });
 });
 
+// Route to display all invoices for a user
+router.get('/invoices', async (req, res) => {
+    const userId = req.session.userId;
+    if (!userId) return res.redirect('/login');
+
+    const [orders] = await pool.query(
+        'SELECT * FROM orders WHERE user_id = ? ORDER BY created_at DESC',
+        [userId]
+    );
+    console.log(orders);
+    res.render('invoices.ejs', { orders });
+});
+
 // Route to display the receipt page
+// NOTE: Keep this LAST to avoid route conflict
 router.get('/:orderId', async (req, res) => {
     const orderId = req.params.orderId;
     const [orderRows] = await pool.query('SELECT * FROM orders WHERE id = ?', [orderId]);
