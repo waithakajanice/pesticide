@@ -105,8 +105,9 @@
       searchInput.addEventListener('input', function () {
         const searchTerm = searchInput.value.trim().toLowerCase();
         productList.forEach(function (product) {
-          const productName = product.textContent.toLowerCase();
-          product.style.display = productName.includes(searchTerm) ? 'block' : 'none';
+          // Search all text in the product card
+          const cardText = product.textContent.toLowerCase();
+          product.style.display = cardText.includes(searchTerm) ? 'block' : 'none';
         });
       });
     });

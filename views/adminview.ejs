@@ -27,7 +27,7 @@
           <h2 class="products-title">Our Products</h2>
           <div class="search-box">
             <input type="text" placeholder="Search for..." id="searchinput" class="search-input">
-            <button type="button" id="searchbutton" class="search-btn">Search</button>
+            <button type="button" id="searchbutton" class="search-button">Search</button>
           </div>
           <% if (products && products.length > 0) { %>
             <div class="table-responsive">
@@ -54,7 +54,7 @@
                       <td><%= product.quantity %></td>
                       <td>
                         <a href="/admin/update/<%= product.id %>" class="btn btn-update">Update</a>
-                        <a href="/admin/delete/<%= product.id %>" class="btn btn-delete" onclick="return confirm('Are you sure you want to delete this product?');">Delete</a>
+                        <a href="/admin/delete/<%= product.id %>" class="btn btn-delete">Delete</a>
                       </td>
                     </tr>
                   <% }); %>
@@ -78,8 +78,11 @@
         const searchTerm = searchInput.value.trim().toLowerCase();
 
         tableRows.forEach(function(row){
-          const productName = row.children[0].textContent.toLowerCase();
-          if (productName.includes(searchTerm)){
+          // Combine all cell text in the row
+          const rowText = Array.from(row.children)
+            .map(cell => cell.textContent.toLowerCase())
+            .join(' ');
+          if (rowText.includes(searchTerm)){
             row.style.display = '';
           } else {
             row.style.display = 'none';
