@@ -97,17 +97,6 @@ header, .main-header, .header-section {
   color: #2b7a2b;
 }
 
-/* Main container */
-.page-wrapper, .main-container {
-  width: 95%;
-  max-width: 900px;
-  margin: 2em auto;
-  background: #fff;
-  border-radius: 10px;
-  box-shadow: 0 4px 24px rgba(0,0,0,0.07);
-  padding: 2em 2.5em;
-}
-
 /* Titles and headings */
 .main-title, .motto-text, .about-heading, .form-heading, .welcome-text {
   text-align: center;
