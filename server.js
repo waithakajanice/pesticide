@@ -288,13 +288,7 @@ app.get('/reviews', async (req, res) => {
 });
 
 app.get('/addproduct', (req, res) => {
-  fetchReviews((error, reviews) => {
-    if (error) {
-      res.status(500).send('Error fetching reviews');
-      return;
-    }
-    res.render("addproduct.ejs", { reviews });
-  });
+  res.render("addproduct.ejs");
 });
 
 app.get("/sold", (req, res) => {
@@ -323,28 +317,6 @@ app.use('/checkout', checkoutRouter);
 app.use('/checkout', checkoutRoutes);
 app.use('/', checkoutRouter);
 app.use('/admin', adminRouter);
-
-// Route handlers for form submissions
-app.post("/addProduct", (req, res) => {
-  const { product, price, dosage, target, description, quantity } = req.body;
-
-  if (!product || !price || !dosage || !target || !description || !quantity) {
-    return res.status(400).send("All fields are required.");
-  }
-
-  const sql = `
-    INSERT INTO products (product, price, dosage, target, description, quantity) 
-    VALUES (?, ?, ?, ?, ?, ?)
-  `;
-
-  pool.query(sql, [product, price, dosage, target, description, quantity], (err, result) => {
-    if (err) {
-      console.error("Error inserting data into MySQL:", err.sqlMessage || err);
-      return res.status(500).send("Error inserting data into MySQL.");
-    }
-    res.redirect("/products");
-  });
-});
 
 app.post('/signup', (req, res) => {
   const sql = "INSERT INTO login (fname, lname, email, password, pwd) VALUES(?, ?, ?, ?, ?)";
@@ -400,52 +372,6 @@ app.post("/adminloginpost", async (req, res) => {
     console.error('Error querying MySQL: ', err);
     res.status(500).send('Error querying MySQL');
   }
-});
-
-
-app.post("/remove", (req, res) => {
-  const id = req.body.id;
-  pool.query("DELETE FROM products WHERE id = ?", [id], (err, result) => {
-    if (err) {
-      console.error('Error deleting product:', err);
-      res.status(500).send('Error deleting product');
-      return;
-    }
-    res.redirect("/adminview");
-  });
-});
-
-app.post('/buy', (req, res) => {
-  const { id, quantity } = req.body;
-
-  if (!id || !quantity) {
-    return res.json({ success: false, message: 'Invalid request data' });
-  }
-
-  pool.query('SELECT quantity FROM products WHERE id = ?', [id], (err, result) => {
-    if (err) {
-      console.log(err)
-      return res.json({ success: false, message: 'Database error' });
-    }
-    if (result.length === 0) {
-      return res.json({ success: false, message: 'Product not found' });
-    }
-
-    let availableQuantity = result[0].quantity;
-
-    if (quantity > availableQuantity) {
-      return res.json({ success: false, message: 'Not enough stock available!' });
-    }
-
-    let newQuantity = availableQuantity - quantity;
-
-    pool.query('UPDATE products SET quantity = ? WHERE id = ?', [newQuantity, id], (err, updateResult) => {
-      if (err) {
-        return res.json({ success: false, message: 'Database update error' });
-      }
-      res.json({ success: true, newQuantity });
-    });
-  });
 });
 
 app.post("/reviews", (req, res) => {

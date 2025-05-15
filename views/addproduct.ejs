@@ -1,153 +1,40 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-<title>PESTICIDES SUPPLY SYSTEM | Contacts</title>
-<meta charset="utf-8">
-<link rel="stylesheet" href="css/style.css">
-
-<script src="js/superfish.js"></script>
-<script src="js/jquery.easing.1.3.js"></script>
-<script src="js/tms-0.4.1.js"></script>
-<script src="js/slider.js"></script>
-<!--[if lt IE 9]>
-<script src="js/html5.js"></script>
-<link rel="stylesheet" href="css/ie.css"> 
-<![endif]-->
-
-<style>
-  #div{
-    display: flex;
-    flex-direction: row;
-    justify-content: center;
-    align-items: center;
-    padding: 9px;
-  }
-  input{
-    margin-left: 9%;
-  }
-  label{
-    background-color: white;
-    width: 90px;
-    color: black;
-     margin-left: -9%;
-  }
-</style>
+  <title>Add Product</title>
+  <meta charset="utf-8">
+  <link rel="stylesheet" href="/css/style.css" />
 </head>
 <body>
-<div class="main-bg">
-  <!-- Header -->
-  <header>
-    <div class="inner">
-      <h1 class="images/pesticide logo.jpg"><a href="/home" style="color: black; text-decoration: none;">PESTICIDES SUPPLY SYSTEM - Agriculture company</a></h1>
-       
-      <div class="clear"></div>
-    </div>
-  </header>
-  <!-- Content -->
-  <section id="content">
-    <div class="container_24">
-      <div class="wrapper">
-        <div class="grid_24 content-bg">
-          <div class="wrapper">
-            <article class="grid_6 suffix_1 prefix_1 alpha">       
-       
-</head>
-
-<form action="/addProduct" method="POST">
-  <button style="margin-left: 700px; width: 150px;"> 
-    <a style="color: black; width: 100px; text-decoration: none;" href="/"> LOG OUT</a>
-  </button><br>
-
-  <div style="margin-left: 700px; width: 150px;">
-    <a style="text-decoration: none;width: 100px; background-color: white; color: black;" href="/adminview">PRODUCTS</a>
-  </div><br>
-
-  <div style="margin-left: 700px; width: 150px;">
-    <a style="text-decoration: none;width: 100px; background-color: white; color: black;" href="/viewreviews">REVIEWS</a>
-  </div><br>
-
-  <div style="border: 2px white solid; width: 500px; height: 400px; display: flex; flex-direction: column; justify-content: center; align-items: center;">
-    <h2>ADD PRODUCTS:</h2>
-
-    <div id="div">
-      <label for="product">PRODUCT</label>
-      <input name="product" type="text" required>
-    </div>
-
-    <div id="div">
-      <label for="price">PRICE (Ksh)</label>
-      <input style="margin-left: 7%;" name="price" type="number" required>
-    </div>
-
-    <div id="div">
-      <label for="dosage">DOSAGE</label>
-      <input name="dosage" style="margin-left: 13%;" type="text" required>
-    </div>
-
-    <div id="div">
-      <label for="target">TARGET</label>
-      <input style="margin-left: 15%;" name="target" type="text" required>
-    </div>
-
-    <div id="div">
-      <label style='margin-left: -10%;' for="description">DESCRIPTION:</label>
-      <textarea style="margin-left: 10%;" name="description" required></textarea>
-    </div>
-
-    <div id="div">
-      <label for="quantity">QUANTITY</label>
-      <input name="quantity" type="number" required>
-    </div>
-
-    <button type="submit" style="margin-top: 10px;">SUBMIT</button>
+  <div class="main-bg">
+    <header class="main-header">
+      <div class="header-inner header-inner-centered">
+        <h1 class="company-logo">
+          PESTICIDES SUPPLY SYSTEM
+        </h1>
+        <nav class="main-navigation nav-centered">
+          <ul class="nav-list">
+            <li class="nav-item"><a href="/adminview" class="nav-link">View Product</a></li>
+            <li class="nav-item active"><a href="/addproduct" class="nav-link">Add Product</a></li>
+            <li class="nav-item"><a href="/" class="nav-link">Log Out</a></li>
+          </ul>
+        </nav>
+      </div>
+    </header>
+    <main>
+      <section class="products-section">
+        <h2 class="products-title">Add New Product</h2>
+        <form action="/admin/add" method="POST" class="product-form">
+          <label>Product Name: <input type="text" name="product" required></label>
+          <label>Price (KSh): <input type="number" name="price" step="0.01" required></label>
+          <label>Dosage: <input type="text" name="dosage" required></label>
+          <label>Description: <textarea name="description" required></textarea></label>
+          <label>Target: <input type="text" name="target" required></label>
+          <label>Quantity: <input type="number" name="quantity" required></label>
+          <button type="submit" class="form-button">Add Product</button>
+        </form>
+      </section>
+    </main>
   </div>
-</form>
-
-     
-     <script>
-      function uploadFile() {
-          var fileInput = document.getElementById('file_input');
-          var file = fileInput.files[0];
-          
-          if (!file) {
-              alert("Please select a file.");
-              return;
-          }
-  
-          var formData = new FormData();
-          formData.append('my_image', file);
-  
-          fetch('/upload', {
-              method: 'POST',
-              body: formData
-          })
-          .then(response => {
-              if (!response.ok) {
-                  throw new Error('Network response was not ok');
-              }
-              return response.json();
-          })
-          .then(data => {
-              console.log('Image uploaded successfully:', data);
-              alert('Image uploaded successfully!');
-          })
-          .catch(error => {
-              console.error('There was an error!', error);
-              alert('There was an error uploading the image.');
-          });
-      }
-  </script>
-  
-      
-        
-
-    <article class="grid_6 suffix_1 prefix_1 alpha">
-    
-    </article>
-  
-
-
-    
-  
 </body>
 </html>

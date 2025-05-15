@@ -1114,6 +1114,62 @@ button.no-print:hover {
   background: #a3001b;
 }
 
+/* Add & Update Product Forms */
+.product-form {
+  max-width: 440px;
+  margin: 32px auto;
+  background: #fff;
+  border: 1px solid #b7e4c7;
+  border-radius: 8px;
+  box-shadow: 0 2px 8px rgba(64,145,108,0.07);
+  padding: 2em 2em 1.5em 2em;
+  display: flex;
+  flex-direction: column;
+  gap: 1.2em;
+}
+
+.product-form label {
+  display: flex;
+  flex-direction: column;
+  font-weight: 500;
+  color: #1b4332;
+  font-size: 1rem;
+  gap: 0.4em;
+}
+
+.product-form input[type="text"],
+.product-form input[type="number"],
+.product-form textarea {
+  padding: 0.6em 0.8em;
+  border: 1px solid #b7e4c7;
+  border-radius: 4px;
+  font-size: 1rem;
+  background: #f7fafc;
+  resize: vertical;
+}
+
+.product-form textarea {
+  min-height: 60px;
+  max-height: 180px;
+}
+
+.product-form button {
+  margin-top: 1em;
+  padding: 0.7em 1.5em;
+  background: #40916c;
+  color: #fff;
+  border: none;
+  border-radius: 4px;
+  font-size: 1.05rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: background 0.2s;
+}
+
+.product-form button:hover {
+  background: #1b4332;
+}
+
 /* Footer styling */
 footer {
   text-align: center;

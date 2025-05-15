@@ -9,12 +9,21 @@
   <div class="main-bg">
     <header class="main-header">
       <div class="header-inner header-inner-centered">
-        <h1 class="company-logo">Update Product</h1>
+        <h1 class="company-logo">
+          PESTICIDES SUPPLY SYSTEM
+        </h1>
+        <nav class="main-navigation nav-centered">
+          <ul class="nav-list">
+            <li class="nav-item"><a href="/adminview" class="nav-link">View Product</a></li>
+            <li class="nav-item"><a href="/addproduct" class="nav-link">Add Product</a></li>
+            <li class="nav-item"><a href="/" class="nav-link">Log Out</a></li>
+          </ul>
+        </nav>
       </div>
     </header>
     <main>
       <section class="products-section">
-        <form action="/admin/update/<%= product.id %>" method="POST" class="login-form">
+        <form action="/admin/update/<%= product.id %>" method="POST" class="product-form">
           <label>Product Name: <input type="text" name="product" value="<%= product.product %>" required></label>
           <label>Price (KSh): <input type="number" name="price" value="<%= product.price %>" step="0.01" required></label>
           <label>Dosage: <input type="text" name="dosage" value="<%= product.dosage %>" required></label>

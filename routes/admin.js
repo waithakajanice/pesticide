@@ -114,4 +114,32 @@ router.post('/delete/:id', async (req, res) => {
     }
 });
 
+// Handle add product
+router.post('/add', async (req, res) => {
+    const { product, price, dosage, description, target, quantity } = req.body;
+
+    // Basic validation
+    if (!product || !price || !dosage || !description || !target || !quantity) {
+        req.flash && req.flash('error', 'All fields are required');
+        return res.redirect('/addproduct');
+    }
+    if (quantity < 0) {
+        req.flash && req.flash('error', 'Quantity must be a positive number');
+        return res.redirect('/addproduct');
+    }
+
+    try {
+        await pool.query(
+            `INSERT INTO products (product, price, dosage, description, target, quantity) VALUES (?, ?, ?, ?, ?, ?)`,
+            [product, parseFloat(price), dosage, description, target, parseInt(quantity)]
+        );
+        req.flash && req.flash('success', 'Product added successfully');
+        res.redirect('/adminview');
+    } catch (err) {
+        console.error('Error adding product:', err);
+        req.flash && req.flash('error', 'Failed to add product');
+        res.redirect('/addproduct');
+    }
+});
+
 export default router;
