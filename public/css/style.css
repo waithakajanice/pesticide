@@ -1063,6 +1063,57 @@ button.no-print:hover {
   border: 1px solid #f44336;
 }
 
+/* Admin Products Table */
+.table-responsive {
+  overflow-x: auto;
+  margin: 0 auto 30px auto;
+  max-width: fit-content;
+}
+.admin-products-table {
+  width: 100%;
+  border-collapse: collapse;
+  background: #fff;
+  margin: 0 auto;
+  font-size: 1rem;
+}
+.admin-products-table th, .admin-products-table td {
+  padding: 12px 10px;
+  border: 1px solid #b7e4c7;
+  text-align: left;
+}
+.admin-products-table th {
+  background: #2b7a2b;
+  color: #fff;
+  font-weight: 600;
+}
+.admin-products-table tr:nth-child(even) {
+  background: #f7fafc;
+}
+.btn {
+  padding: 6px 14px;
+  border-radius: 4px;
+  text-decoration: none;
+  font-size: 0.97rem;
+  margin-right: 6px;
+  transition: background 0.2s, color 0.2s;
+}
+.btn-update {
+  background: #2b7a2b;
+  color: #fff;
+  border: none;
+}
+.btn-update:hover {
+  background: #1b4332;
+}
+.btn-delete {
+  background: #d90429;
+  color: #fff;
+  border: none;
+}
+.btn-delete:hover {
+  background: #a3001b;
+}
+
 /* Footer styling */
 footer {
   text-align: center;

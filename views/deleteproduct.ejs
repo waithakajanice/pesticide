@@ -1,0 +1,26 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <title>Delete Product</title>
+  <meta charset="utf-8">
+  <link rel="stylesheet" href="/css/style.css" />
+</head>
+<body>
+  <div class="main-bg">
+    <header class="main-header">
+      <div class="header-inner header-inner-centered">
+        <h1 class="company-logo">Delete Product</h1>
+      </div>
+    </header>
+    <main>
+      <section class="products-section">
+        <p>Are you sure you want to delete <strong><%= product.product %></strong>?</p>
+        <form action="/admin/delete/<%= product.id %>" method="POST">
+          <button type="submit" class="btn btn-delete">Yes, Delete</button>
+          <a href="/adminview" class="btn btn-update">Cancel</a>
+        </form>
+      </section>
+    </main>
+  </div>
+</body>
+</html>

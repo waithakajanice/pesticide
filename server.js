@@ -12,7 +12,9 @@ import { getStorage } from "firebase/storage";
 import cartRoutes from './routes/cart.js';
 import checkoutRoutes from './routes/checkout.js';
 import checkoutRouter from './routes/checkout.js';
+import adminRouter from './routes/admin.js';
 import session from 'express-session';
+import flash from 'connect-flash';
 import dotenv from 'dotenv';
 
 // Load environment variables from .env file
@@ -64,6 +66,14 @@ app.use(express.urlencoded({ extended: true }));
 app.set('view engine', 'ejs');
 
 // Session configuration
+app.use(session({
+  secret: process.env.SESSION_SECRET || 'your_secret_key',
+  resave: false,
+  saveUninitialized: false
+}));
+
+app.use(flash());
+
 app.use(session({
   secret: process.env.SESSION_SECRET,
   resave: false,
@@ -259,14 +269,13 @@ app.get('/products', async (req, res) => {
   }
 });
 
-app.get('/adminview', (req, res) => {
-  fetchProducts((error, products) => {
-    if (error) {
-      res.status(500).send('Error fetching products');
-      return;
-    }
+app.get('/adminview', async (req, res) => {
+  try {
+    const products = await fetchProducts();
     res.render('adminview', { products });
-  });
+  } catch (error) {
+    res.status(500).send('Error fetching products');
+  }
 });
 
 app.get('/reviews', async (req, res) => {
@@ -313,6 +322,7 @@ app.use('/cart', cartRoutes);
 app.use('/checkout', checkoutRouter);
 app.use('/checkout', checkoutRoutes);
 app.use('/', checkoutRouter);
+app.use('/admin', adminRouter);
 
 // Route handlers for form submissions
 app.post("/addProduct", (req, res) => {
@@ -381,13 +391,8 @@ app.post("/adminloginpost", async (req, res) => {
     if (results.length > 0) {
       req.session.adminId = results[0].id;
 
-      // Use await with fetchProducts
-      try {
-        const products = await fetchProducts();
-        res.render('adminview', { products });
-      } catch (error) {
-        res.status(500).send('Error fetching products');
-      }
+      // Redirect to adminview route
+      res.redirect('/adminview');
     } else {
       res.render('admin', { error: 'Invalid username or password' });
     }
@@ -396,6 +401,7 @@ app.post("/adminloginpost", async (req, res) => {
     res.status(500).send('Error querying MySQL');
   }
 });
+
 
 app.post("/remove", (req, res) => {
   const id = req.body.id;
@@ -465,8 +471,8 @@ function startServer() {
   const port = process.env.PORT || 3000;
   app.listen(port, () => {
     const now = new Date().toLocaleString();
-    log(`[${now}] ✅ Server running on http://localhost:${port}`);
     log(`Environment: ${process.env.NODE_ENV || 'development'}`);
+    log(`[${now}] ✅ Server running on http://localhost:${port}`);
   });
 }
 
