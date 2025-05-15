@@ -14,26 +14,39 @@
         <section id="checkout">
             <h2>Your Order</h2>
             <div id="order-summary">
-                <!-- Order summary will be populated here -->
-                <ul id="order-items"></ul>
-                <div id="total-price"></div>
+                <ul>
+                    <% 
+                        let total = 0;
+                        cart.forEach(function(cartItem) {
+                            const product = DBproducts.find(p => p.id === cartItem.id);
+                            if (product) {
+                                const itemTotal = product.price * cartItem.quantity;
+                                total += itemTotal;
+                    %>
+                    <li>
+                        <strong><%= product.product %></strong> (x<%= cartItem.quantity %>) - $<%= itemTotal.toFixed(2) %>
+                    </li>
+                    <% }}); %>
+                </ul>
+                <div id="total-price"><strong>Total:</strong> $<%= total.toFixed(2) %></div>
             </div>
-            <form id="checkout-form" action="/checkout/submit" method="POST">
-                <h3>Payment Information</h3>
+            <form id="checkout-form" action="/checkout/submit" method="POST" onsubmit="return validateConfirm();">
+                <h3>Order Confirmation</h3>
                 <label for="name">Name:</label>
                 <input type="text" id="name" name="name" required>
-                
-                <!-- Remove or keep email as needed -->
-                <label for="email">Email:</label>
-                <input type="email" id="email" name="email">
 
-                <label for="address">Shipping Address:</label>
+                <label for="email">Email:</label>
+                <input type="email" id="email" name="email" required>
+
+                <label for="address">Delivery Address:</label>
                 <textarea id="address" name="address" required></textarea>
 
-                <label for="paymentInfo">Payment Info:</label>
-                <input type="text" id="paymentInfo" name="paymentInfo" required>
+                <div>
+                    <input type="checkbox" id="confirm" name="confirm" required>
+                    <label for="confirm">I confirm these are the items I ordered.</label>
+                </div>
 
-                <button type="submit">Complete Purchase</button>
+                <button type="submit">Confirm Order</button>
             </form>
         </section>
         <footer>
@@ -41,5 +54,14 @@
         </footer>
     </div>
     <script src="/js/cart.js"></script>
+    <script>
+    function validateConfirm() {
+        if (!document.getElementById('confirm').checked) {
+            alert('Please confirm your order.');
+            return false;
+        }
+        return true;
+    }
+    </script>
 </body>
 </html>

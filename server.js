@@ -11,6 +11,7 @@ import { initializeApp } from "firebase/app";
 import { getStorage } from "firebase/storage";
 import cartRoutes from './routes/cart.js';
 import checkoutRoutes from './routes/checkout.js';
+import checkoutRouter from './routes/checkout.js';
 import session from 'express-session';
 import dotenv from 'dotenv';
 
@@ -291,7 +292,9 @@ app.get('/viewreviews', (req, res) => {
 
 // Shopping cart and checkout routes
 app.use('/cart', requireLogin, cartRoutes);
+app.use('/checkout', checkoutRouter);
 app.use('/checkout', requireLogin, checkoutRoutes);
+app.use('/', checkoutRouter);
 
 // Route handlers for form submissions
 app.post("/addProduct", (req, res) => {
