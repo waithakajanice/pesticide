@@ -1,63 +1,76 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Shopping Cart</title>
-    <link rel="stylesheet" href="/css/cart.css">
-    <script src="/js/cart.js" defer></script>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Shopping Cart</title>
+  <link rel="stylesheet" href="/css/style.css" />
+  <script src="/js/cart.js" defer></script>
 </head>
 <body>
-    <div class="main-bg">
-        <header>
-            <h1>Shopping Cart</h1>
-            <nav>
-                <ul>
-                    <li><a href="/home">Home</a></li>
-                    <li><a href="/products">Products</a></li>
-                    <li><a href="/checkout">Checkout</a></li>
-                </ul>
-            </nav>
-        </header>
+  <div class="main-bg">
+    <!-- Header -->
+    <header class="main-header">
+      <div class="header-inner">
+        <h1 class="company-logo">
+          <a href="/home" class="company-logo-link">PESTICIDES SUPPLY SYSTEM - Shopping Cart</a>
+        </h1>
+        <nav class="main-navigation">
+          <ul class="nav-list">
+            <li class="nav-item"><a href="/home" class="nav-link">Home</a></li>
+            <li class="nav-item"><a href="/products" class="nav-link">Products</a></li>
+            <li class="nav-item active"><a href="/cart" class="nav-link">Cart</a></li>
+            <li class="nav-item"><a href="/pricing" class="nav-link">Pricing</a></li>
+            <li class="nav-item"><a href="/contacts" class="nav-link">Contacts</a></li>
+            <li class="nav-item"><a href="/reviews" class="nav-link">Reviews</a></li>
+            <li class="nav-item"><a href="/" class="nav-link">Log Out</a></li>
+          </ul>
+        </nav>
+      </div>
+    </header>
 
-        <section id="cart">
-            <h2>Your Cart</h2>
-            <div id="cart-items">
-                <% if (cart && cart.length > 0) { %>
-                    <% let totalPrice = 0; %>
-
-                    <% cart.forEach(function(cartItem) { 
-                        const product = productMap[cartItem.id];
-                        if (product) {
-                            const itemTotal = product.price * cartItem.quantity;
-                            totalPrice += itemTotal;
-                    %>
-                        <div class="cart-item">
-                            <div class="item-details">
-                                <h3><%= product.product %></h3>
-                                <p>Price: $<%= product.price.toFixed(2) %></p>
-                                <p>Quantity: 
-                                    <input type="number" 
-                                           value="<%= cartItem.quantity %>" 
-                                           min="1" 
-                                           data-product-id="<%= cartItem.id %>" 
-                                           class="quantity-input">
-                                </p>
-                                <p>Subtotal: $<%= itemTotal.toFixed(2) %></p>
-                            </div>
-                            <button class="remove-btn" data-product-id="<%= cartItem.id %>">Remove</button>
-                        </div>
-                    <% }}); %>
-
-                    <div class="cart-total">
-                        <h3>Total: $<span id="total-price"><%= totalPrice.toFixed(2) %></span></h3>
-                    </div>
-                    <button type="button" id="checkout-button" onclick="proceedToCheckout()">Proceed to Checkout</button>
-                <% } else { %>
-                    <p>Your cart is empty.</p>
-                <% } %>
+    <!-- Cart Section -->
+    <section id="cart">
+      <h2>Your Cart</h2>
+      <div id="cart-items">
+        <% if (cart && cart.length > 0) { 
+            let totalPrice = 0;
+        %>
+          <% cart.forEach(function(cartItem) {
+               const product = productMap[cartItem.id];
+               if (product) {
+                 const itemTotal = product.price * cartItem.quantity;
+                 totalPrice += itemTotal;
+          %>
+            <div class="cart-item">
+              <div class="item-details">
+                <h3><%= product.product %></h3>
+                <p>Price: $<%= product.price.toFixed(2) %></p>
+                <p>
+                  Quantity:
+                  <input 
+                    type="number" 
+                    value="<%= cartItem.quantity %>" 
+                    min="1"
+                    data-product-id="<%= cartItem.id %>"
+                    class="quantity-input"
+                  />
+                </p>
+                <p>Subtotal: $<%= itemTotal.toFixed(2) %></p>
+              </div>
+              <button class="remove-btn" data-product-id="<%= cartItem.id %>">Remove</button>
             </div>
-        </section>
-    </div>
+          <% }}); %>
+
+          <div class="cart-total">
+            <h3>Total: $<span id="total-price"><%= totalPrice.toFixed(2) %></span></h3>
+          </div>
+          <button type="button" id="checkout-button" onclick="proceedToCheckout()">Proceed to Checkout</button>
+        <% } else { %>
+          <p>Your cart is empty.</p>
+        <% } %>
+      </div>
+    </section>
+  </div>
 </body>
 </html>
