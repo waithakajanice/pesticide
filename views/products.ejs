@@ -59,7 +59,7 @@
                 <button 
                   class="add-to-cart-btn"
                   data-id="<%= product.id %>" 
-                  data-name="<%= product.productName %>" 
+                  data-name="<%= product.product %>" 
                   data-price="<%= product.price %>"
                 >
                   Add to Cart
@@ -74,9 +74,24 @@
     </main>
   </div>
 
+  <!-- Add this just before </body> -->
+  <div id="cart-popup" style="display:none;position:fixed;top:300px;left:50%;transform:translateX(-50%);background:#4a8a4a;color:#fff;padding:18px 32px;border-radius:8px;box-shadow:0 2px 12px rgba(43,122,43,0.15);font-size:18px;z-index:9999;">
+    Product added to cart!
+  </div>
+
   <!-- Scripts -->
   <script>
-    function addToCart(productId) {
+    function showCartPopup(message) {
+      const popup = document.getElementById('cart-popup');
+      popup.textContent = message;
+      popup.style.display = 'block';
+      clearTimeout(window.cartPopupTimeout);
+      window.cartPopupTimeout = setTimeout(() => {
+        popup.style.display = 'none';
+      }, 3000);
+    }
+
+    function addToCart(productId, productName) {
       fetch('/cart/add', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
@@ -85,9 +100,9 @@
       .then(response => response.json())
       .then(data => {
         if (data.success) {
-          alert(`Product ${productId} added to cart!`);
+          showCartPopup(`"${productName}" added to cart!`);
         } else {
-          alert('Failed to add to cart. Please log in.');
+          showCartPopup('Failed to add to cart. Please log in.');
         }
       });
     }
@@ -95,7 +110,7 @@
     document.addEventListener('DOMContentLoaded', function () {
       document.querySelectorAll('.add-to-cart-btn').forEach(button => {
         button.addEventListener('click', function () {
-          addToCart(this.dataset.id);
+          addToCart(this.dataset.id, this.dataset.name);
         });
       });
 
