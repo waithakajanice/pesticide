@@ -152,30 +152,27 @@ async function fetchSold() {
   return results;
 }
 
-const fetchProductsFromDB = () => {
-  return new Promise((resolve, reject) => {
-    const sql = "SELECT * FROM products";
-    pool.promise().query(sql)
-      .then(([results]) => {
-        const products = results.map(product => {
-          return {
-            id: product.id,
-            product: product.product,
-            price: product.price,
-            dosage: product.dosage,
-            description: product.description,
-            target: product.target,
-            quantity: product.quantity
-          };
-        });
-        resolve(products);
-      })
-      .catch(err => {
-        console.error('Error fetching products from MySQL: ', err);
-        reject(err);
-      });
-  });
+const fetchProductsFromDB = async () => {
+  const sql = "SELECT * FROM products";
+  try {
+    const [results] = await pool.query(sql);
+    const products = results.map(product => ({
+      id: product.id,
+      product: product.product,
+      price: product.price,
+      dosage: product.dosage,
+      description: product.description,
+      target: product.target,
+      quantity: product.quantity
+    }));
+    return products;
+  } catch (err) {
+    console.error('Error fetching products from MySQL: ', err);
+    throw err;
+  }
 };
+
+export { fetchProductsFromDB };
 
 // Authentication functions
 const signIn = async (email, password) => {
@@ -189,6 +186,14 @@ const signIn = async (email, password) => {
     throw err;
   }
 };
+
+// Middleware for login requirement
+function requireLogin(req, res, next) {
+  if (!req.session.userId) {
+    return res.redirect('/'); // or your login page
+  }
+  next();
+}
 
 // Route handlers for views
 app.get('/', (req, res) => {
@@ -226,7 +231,7 @@ app.get('/pay', (req, res) => {
   res.render("pay.ejs");
 });
 
-app.get('/products', async (req, res) => {
+app.get('/products', requireLogin, async (req, res) => {
   try {
     const products = await fetchProducts();
     res.render('products', { products });
@@ -285,8 +290,8 @@ app.get('/viewreviews', (req, res) => {
 });
 
 // Shopping cart and checkout routes
-app.use('/cart', cartRoutes);
-app.use('/checkout', checkoutRoutes);
+app.use('/cart', requireLogin, cartRoutes);
+app.use('/checkout', requireLogin, checkoutRoutes);
 
 // Route handlers for form submissions
 app.post("/addProduct", (req, res) => {
@@ -333,17 +338,16 @@ app.post('/signup', (req, res) => {
   });
 });
 
-app.post('/login', (req, res) => {
-  signIn(req.body.email, req.body.password)
-    .then((result) => {
-      if (result)
-        res.status(200).redirect("/home");
-      else
-        res.status(200).send(`Check password for ${req.body.email}`);
-    })
-    .catch((e) => {
-      res.status(500).send("Could not sign in");
-    });
+app.post('/login', async (req, res) => {
+  const { email, password } = req.body;
+  const sql = "SELECT * FROM login WHERE email = ? AND password = ?";
+  const [rows] = await pool.query(sql, [email, password]);
+  if (rows.length > 0) {
+    req.session.userId = rows[0].id;
+    res.redirect("/home");
+  } else {
+    res.status(401).send("Invalid credentials");
+  }
 });
 
 app.post("/admin", (req, res) => {

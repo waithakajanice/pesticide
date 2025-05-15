@@ -110,48 +110,35 @@
   </div>
 
   <script>
-    // Cart functionality
-    function addToCart(productData) {
-      const { id, productName, price } = productData;
-      
-      let cart = JSON.parse(localStorage.getItem('cart')) || [];
-      const existingItem = cart.find(item => item.id === id);
-      
-      if (existingItem) {
-        existingItem.quantity += 1;
-      } else {
-        cart.push({
-          id: id,
-          productName: productName,
-          price: parseFloat(price),
-          quantity: 1
-        });
-      }
-      
-      localStorage.setItem('cart', JSON.stringify(cart));
-      alert(`${productName} added to cart!`);
+    function addToCart(productId) {
+      fetch('/cart/add', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ id: Number(productId), quantity: 1 })
+      })
+      .then(response => response.json())
+      .then(data => {
+        if (data.success) {
+          alert(`Product ${productId} added to cart!`);
+        } else {
+          alert('Failed to add to cart. Please log in.');
+        }
+      });
     }
 
-    // Initialize when DOM is loaded
     document.addEventListener('DOMContentLoaded', function() {
       // Add to cart button handlers
       document.querySelectorAll('.add-to-cart-btn').forEach(button => {
         button.addEventListener('click', function() {
-          addToCart({
-            id: this.dataset.id,
-            productName: this.dataset.name,
-            price: this.dataset.price
-          });
+          addToCart(this.dataset.id);
         });
       });
 
-      // Search functionality
+      // Search functionality (unchanged)
       const searchInput = document.getElementById('searchinput');
       const productList = document.querySelectorAll('.product');
-
       searchInput.addEventListener('input', function() {
         const searchTerm = searchInput.value.trim().toLowerCase();
-
         productList.forEach(function(product) {
           const productName = product.textContent.toLowerCase();
           product.style.display = productName.includes(searchTerm) ? 'inline-block' : 'none';
