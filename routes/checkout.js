@@ -46,15 +46,23 @@ router.post('/submit', async (req, res) => {
 
     // Calculate total
     const [products] = await pool.query(
-        `SELECT id, price FROM products WHERE id IN (${cartItems.map(() => '?').join(',')})`,
+        `SELECT id, price, quantity FROM products WHERE id IN (${cartItems.map(() => '?').join(',')})`,
         cartItems.map(item => item.product_id)
     );
     let total = 0;
     const priceMap = {};
-    products.forEach(p => priceMap[p.id] = Number(p.price));
-    cartItems.forEach(item => {
-        total += priceMap[item.product_id] * item.quantity;
+    const stockMap = {};
+    products.forEach(p => {
+        priceMap[p.id] = Number(p.price);
+        stockMap[p.id] = Number(p.stock);
     });
+
+    // Check stock availability
+    for (const item of cartItems) {
+        if (stockMap[item.product_id] < item.quantity) {
+            return res.status(400).send('Insufficient stock for one or more items.');
+        }
+    }
 
     // Insert order (now with email)
     const [orderResult] = await pool.query(
@@ -63,11 +71,15 @@ router.post('/submit', async (req, res) => {
     );
     const orderId = orderResult.insertId;
 
-    // Insert order items
+    // Insert order items and update stock
     for (const item of cartItems) {
         await pool.query(
             'INSERT INTO order_items (order_id, product_id, quantity, price) VALUES (?, ?, ?, ?)',
             [orderId, item.product_id, item.quantity, priceMap[item.product_id]]
+        );
+        await pool.query(
+            'UPDATE products SET quantity = quantity - ? WHERE id = ? AND quantity >= ?',
+            [item.quantity, item.product_id, item.quantity]
         );
     }
 
@@ -88,12 +100,13 @@ router.get('/invoice/:orderId', async (req, res) => {
     }
     order.total = Number(order.total); // Ensure total is a number
     const [items] = await pool.query(
-        `SELECT oi.quantity, oi.price, p.product 
+        `SELECT oi.quantity, oi.price, oi.product_id, p.product 
          FROM order_items oi 
          JOIN products p ON oi.product_id = p.id 
          WHERE oi.order_id = ?`, [orderId]
     );
     items.forEach(item => item.price = Number(item.price));
+
     let email = order.email;
     if (!email) {
         const [userRows] = await pool.query('SELECT email FROM login WHERE id = ?', [order.user_id]);
