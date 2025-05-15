@@ -1,40 +1,104 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <title>Invoice - Pesticide Supply System</title>
-    <link rel="stylesheet" href="/css/cart.css">
+  <meta charset="UTF-8" />
+  <title>Invoice - Pesticide Supply System</title>
+  <link rel="stylesheet" href="/css/style.css" />
 </head>
 <body>
-    <div class="receipt-container">
-        <h1>Invoice</h1>
-        <p>Thank you for your order!</p>
-        <div>
-            <strong>Name:</strong> <%= order.name %><br>
-            <strong>Email:</strong> <%= order.email %><br>
-            <strong>Delivery Address:</strong> <%= order.address %><br>
-            <strong>Order ID:</strong> <%= order.id %><br>
-            <strong>Date:</strong> <%= order.created_at ? order.created_at.toLocaleString ? order.created_at.toLocaleString() : order.created_at : '' %><br>
-        </div>
-        <div class="receipt-details">
-            <h2>Order Summary</h2>
-            <ul>
-                <% items.forEach(item => { %>
-                    <li>
-                        <strong>Product:</strong> <%= item.product %> <br>
-                        <strong>Quantity:</strong> <%= item.quantity %> <br>
-                        <strong>Price:</strong> $<%= item.price.toFixed(2) %> <br>
-                    </li>
-                <% }); %>
-            </ul>
-            <h3>Total: $<%= order.total.toFixed(2) %></h3>
-            <p style="margin-top: 1em; color: #555;">
-                <em>
-                    Please note: Payment will be collected after delivery. A physical receipt will be provided at that time.
-                </em>
-            </p>
-        </div>
-        <button onclick="window.print()">Download Invoice</button>
+  <!-- Header -->
+  <header class="main-header">
+    <div class="header-inner">
+      <h1 class="company-logo">
+        <a href="/home" class="company-logo-link">PESTICIDES SUPPLY SYSTEM - Invoice</a>
+      </h1>
+      <nav class="main-navigation">
+        <ul class="nav-list">
+          <li class="nav-item"><a href="/home" class="nav-link">Home</a></li>
+          <li class="nav-item"><a href="/products" class="nav-link">Products</a></li>
+          <li class="nav-item"><a href="/cart" class="nav-link">Cart</a></li>
+          <li class="nav-item"><a href="/pricing" class="nav-link">Pricing</a></li>
+          <li class="nav-item"><a href="/contacts" class="nav-link">Contacts</a></li>
+          <li class="nav-item"><a href="/reviews" class="nav-link">Reviews</a></li>
+          <li class="nav-item"><a href="/" class="nav-link logout-link">Log Out</a></li>
+        </ul>
+      </nav>
     </div>
+  </header>
+
+  <div class="receipt-container">
+    <h1>Invoice</h1>
+    <p>Thank you for your order!</p>
+
+    <div>
+      <strong>Name:</strong> <%= order.name %><br>
+      <strong>Email:</strong> <%= order.email %><br>
+      <strong>Delivery Address:</strong> <%= order.address %><br>
+      <strong>Order ID:</strong> <%= order.id %><br>
+      <strong>Date:</strong> 
+      <%= order.created_at && order.created_at.toLocaleString 
+            ? order.created_at.toLocaleString() 
+            : (order.created_at || '') %><br>
+    </div>
+
+    <div class="receipt-details">
+      <h2>Order Summary</h2>
+      <ul>
+        <% items.forEach(item => { %>
+          <li>
+            <strong>Product:</strong> <%= item.product %> <br>
+            <strong>Quantity:</strong> <%= item.quantity %> <br>
+            <strong>Price:</strong> $<%= item.price.toFixed(2) %>
+          </li>
+        <% }); %>
+      </ul>
+
+      <h3>Total: $<%= order.total.toFixed(2) %></h3>
+
+      <p class="note">
+        <em>
+          Please note: Payment will be collected after delivery. A physical receipt will be provided at that time.
+        </em>
+      </p>
+
+      <p class="note">
+        <em>
+          A delivery personnel will contact you if any further information is required.
+        </em>
+      </p>
+
+      <p class="note">
+        <em>
+          Delivery is free within the country and is expected within 5 business days.
+          For international orders, delivery charges will be calculated and communicated separately.
+        </em>
+      </p>
+    </div>
+
+    <button type="button" class="no-print" onclick="printReceiptContainer()">Download Invoice</button>
+  </div>
+
+  <script>
+    function printReceiptContainer() {
+      const receipt = document.querySelector('.receipt-container');
+      if (!receipt) return;
+      const win = window.open('', '', 'width=900,height=700');
+      win.document.write(`
+        <html>
+          <head>
+            <title>Invoice</title>
+            <link rel="stylesheet" href="${location.origin}/css/style.css" />
+          </head>
+          <body>${receipt.outerHTML}</body>
+        </html>
+      `);
+      win.document.close();
+      win.onload = function() {
+        win.focus();
+        win.print();
+        win.onafterprint = () => win.close();
+      };
+    }
+  </script>
 </body>
 </html>

@@ -730,6 +730,225 @@ header, .main-header, .header-section {
   background: #205820;
 }
 
+/* Checkout Page Styles */
+#checkout {
+  margin: 2em auto 1.5em auto;
+  padding: 2em 2em 1.5em 2em;
+  background: #f3f9f3;
+  border-radius: 10px;
+  box-shadow: 0 2px 12px rgba(43,122,43,0.07);
+  max-width: 700px;
+}
+
+#checkout h2 {
+  text-align: center;
+  color: #2b7a2b;
+  font-size: 1.5em;
+  margin-bottom: 1.5em;
+  font-weight: bold;
+}
+
+#order-summary ul {
+  list-style: none;
+  padding: 0;
+  margin: 0 0 1em 0;
+}
+
+#order-summary li {
+  background: #fff;
+  border-radius: 7px;
+  box-shadow: 0 1px 6px rgba(43,122,43,0.05);
+  margin-bottom: 0.7em;
+  padding: 0.8em 1em;
+  font-size: 1.05em;
+}
+
+#total-price {
+  text-align: right;
+  font-size: 1.15em;
+  color: #205820;
+  margin-bottom: 1.5em;
+}
+
+#checkout-form {
+  background: #fff;
+  border-radius: 10px;
+  box-shadow: 0 1px 6px rgba(43,122,43,0.05);
+  padding: 2em 1.5em 1.5em 1.5em;
+  margin-top: 2em;
+  display: flex;
+  flex-direction: column;
+  gap: 1.1em;
+}
+
+#checkout-form h3 {
+  color: #2b7a2b;
+  font-size: 1.2em;
+  margin-bottom: 0.7em;
+  font-weight: bold;
+}
+
+#checkout-form label {
+  font-weight: 500;
+  color: #2b7a2b;
+  margin-bottom: 0.2em;
+}
+
+#checkout-form input,
+#checkout-form textarea {
+  padding: 0.7em;
+  border: 1px solid #b7e4c7;
+  border-radius: 5px;
+  font-size: 1em;
+  background: #f7f7f7;
+  margin-bottom: 0.5em;
+}
+
+#checkout-form textarea {
+  min-height: 70px;
+  resize: vertical;
+}
+
+.checkbox-group {
+  display: flex;
+  align-items: center;
+  gap: 0.5em;
+  margin: 0.5em 0 1em 0;
+}
+
+#checkout-form button[type="submit"] {
+  background: #2b7a2b;
+  color: #fff;
+  border: none;
+  padding: 0.9em 0;
+  border-radius: 5px;
+  font-size: 1.1em;
+  font-weight: bold;
+  cursor: pointer;
+  transition: background 0.2s;
+  margin-top: 1em;
+}
+
+#checkout-form button[type="submit"]:hover {
+  background: #205820;
+}
+
+/* Invoice Page Styles */
+.receipt-container {
+  max-width: 700px;
+  margin: 2em auto;
+  background: #f3f9f3;
+  border-radius: 10px;
+  box-shadow: 0 2px 12px rgba(43,122,43,0.07);
+  padding: 2em 2.5em 2em 2.5em;
+}
+
+.receipt-container h1 {
+  text-align: center;
+  color: #2b7a2b;
+  font-size: 2em;
+  margin-bottom: 0.5em;
+}
+
+.receipt-container p {
+  text-align: center;
+  color: #205820;
+  font-size: 1.1em;
+  margin-bottom: 1.5em;
+}
+
+.receipt-details {
+  margin-top: 2em;
+  background: #fff;
+  border-radius: 8px;
+  box-shadow: 0 1px 6px rgba(43,122,43,0.05);
+  padding: 1.5em 1.2em;
+}
+
+.receipt-details h2 {
+  color: #2b7a2b;
+  font-size: 1.3em;
+  margin-bottom: 1em;
+  font-weight: bold;
+}
+
+.receipt-details ul {
+  list-style: none;
+  padding: 0;
+  margin: 0 0 1em 0;
+}
+
+.receipt-details li {
+  background: #fffbe6;
+  border: 1px solid #ffe066;
+  border-radius: 7px;
+  margin-bottom: 1em;
+  padding: 0.8em 1em;
+  font-size: 1.05em;
+}
+
+.receipt-details h3 {
+  text-align: right;
+  font-size: 1.15em;
+  color: #205820;
+  margin-top: 1.5em;
+}
+
+.note {
+  margin-top: 1em;
+  color: #205820;
+  font-size: 1em;
+  background: #e9fbe9;
+  border-left: 4px solid #2b7a2b;
+  padding: 0.7em 1em;
+  border-radius: 5px;
+}
+
+button[onclick="window.print()"] {
+  display: block;
+  margin: 2em auto 0 auto;
+  background: #2b7a2b;
+  color: #fff;
+  border: none;
+  padding: 0.9em 2em;
+  border-radius: 5px;
+  font-size: 1.1em;
+  font-weight: bold;
+  cursor: pointer;
+  transition: background 0.2s;
+}
+
+button[onclick="window.print()"]:hover {
+  background: #205820;
+}
+
+/* Update this selector to style all .no-print buttons consistently */
+button.no-print {
+  display: block;
+  margin: 2em auto 0 auto;
+  background: #2b7a2b;
+  color: #fff;
+  border: none;
+  padding: 0.9em 2em;
+  border-radius: 5px;
+  font-size: 1.1em;
+  font-weight: bold;
+  cursor: pointer;
+  transition: background 0.2s;
+}
+
+button.no-print:hover {
+  background: #205820;
+}
+
+/* Footer styling */
+footer {
+  text-align: center;
+  margin-top: 2em;
+  color: #888;
+  font-size: 0.95em;
+}
+
 @media (max-width: 700px) {
   #cart {
     padding: 1em 0.5em;
@@ -740,6 +959,24 @@ header, .main-header, .header-section {
   }
   .cart-total {
     text-align: center;
+  }
+}
+
+@media (max-width: 700px) {
+  #checkout {
+    padding: 1em 0.5em;
+  }
+  #checkout-form {
+    padding: 1em 0.5em;
+  }
+}
+
+@media (max-width: 700px) {
+  .receipt-container {
+    padding: 1em 0.5em;
+  }
+  .receipt-details {
+    padding: 1em 0.5em;
   }
 }
 
@@ -790,5 +1027,11 @@ header, .main-header, .header-section {
   .contacts-section {
     flex-direction: column;
     padding: 1em 0.5em;
+  }
+}
+
+@media print {
+  button, .no-print {
+    display: none !important;
   }
 }

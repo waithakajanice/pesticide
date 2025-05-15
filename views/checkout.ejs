@@ -1,67 +1,94 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Checkout - Pesticide Supply System</title>
-    <link rel="stylesheet" href="/css/cart.css">
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Checkout - Pesticide Supply System</title>
+  <link rel="stylesheet" href="/css/style.css" />
 </head>
 <body>
-    <div class="main-bg">
-        <header>
-            <h1>Checkout</h1>
-        </header>
-        <section id="checkout">
-            <h2>Your Order</h2>
-            <div id="order-summary">
-                <ul>
-                    <% 
-                        let total = 0;
-                        cart.forEach(function(cartItem) {
-                            const product = DBproducts.find(p => p.id === cartItem.id);
-                            if (product) {
-                                const itemTotal = product.price * cartItem.quantity;
-                                total += itemTotal;
-                    %>
-                    <li>
-                        <strong><%= product.product %></strong> (x<%= cartItem.quantity %>) - $<%= itemTotal.toFixed(2) %>
-                    </li>
-                    <% }}); %>
-                </ul>
-                <div id="total-price"><strong>Total:</strong> $<%= total.toFixed(2) %></div>
-            </div>
-            <form id="checkout-form" action="/checkout/submit" method="POST" onsubmit="return validateConfirm();">
-                <h3>Order Confirmation</h3>
-                <label for="name">Name:</label>
-                <input type="text" id="name" name="name" required>
+  <div class="main-bg">
+    <!-- Header -->
+    <header class="main-header">
+      <div class="header-inner">
+        <h1 class="company-logo">
+          <a href="/home" class="company-logo-link">PESTICIDES SUPPLY SYSTEM - Checkout</a>
+        </h1>
+        <nav class="main-navigation">
+          <ul class="nav-list">
+            <li class="nav-item"><a href="/home" class="nav-link">Home</a></li>
+            <li class="nav-item"><a href="/products" class="nav-link">Products</a></li>
+            <li class="nav-item"><a href="/cart" class="nav-link">Cart</a></li>
+            <li class="nav-item"><a href="/pricing" class="nav-link">Pricing</a></li>
+            <li class="nav-item"><a href="/contacts" class="nav-link">Contacts</a></li>
+            <li class="nav-item"><a href="/reviews" class="nav-link">Reviews</a></li>
+            <li class="nav-item"><a href="/" class="nav-link logout-link">Log Out</a></li>
+          </ul>
+        </nav>
+      </div>
+    </header>
 
-                <label for="email">Email:</label>
-                <input type="email" id="email" name="email" required>
+    <!-- Checkout Section -->
+    <section id="checkout">
+      <h2>Your Order</h2>
+      <div id="order-summary">
+        <% 
+          let total = 0;
+        %>
+        <ul>
+          <% cart.forEach(function(cartItem) {
+              const product = DBproducts.find(p => p.id === cartItem.id);
+              if (product) {
+                const itemTotal = product.price * cartItem.quantity;
+                total += itemTotal;
+          %>
+            <li>
+              <strong><%= product.product %></strong> (x<%= cartItem.quantity %>) - $<%= itemTotal.toFixed(2) %>
+            </li>
+          <% }}); %>
+        </ul>
+        <div id="total-price">
+          <strong>Total:</strong> $<%= total.toFixed(2) %>
+        </div>
+      </div>
 
-                <label for="address">Delivery Address:</label>
-                <textarea id="address" name="address" required></textarea>
+      <!-- Order Confirmation Form -->
+      <form id="checkout-form" action="/checkout/submit" method="POST" onsubmit="return validateConfirm();">
+        <h3>Order Confirmation</h3>
 
-                <div>
-                    <input type="checkbox" id="confirm" name="confirm" required>
-                    <label for="confirm">I confirm these are the items I ordered.</label>
-                </div>
+        <label for="name">Name:</label>
+        <input type="text" id="name" name="name" required />
 
-                <button type="submit">Confirm Order</button>
-            </form>
-        </section>
-        <footer>
-            <p>&copy; 2023 Pesticide Supply System</p>
-        </footer>
-    </div>
-    <script src="/js/cart.js"></script>
-    <script>
+        <label for="email">Email:</label>
+        <input type="email" id="email" name="email" required />
+
+        <label for="address">Delivery Address:</label>
+        <textarea id="address" name="address" required></textarea>
+
+        <div class="checkbox-group">
+          <input type="checkbox" id="confirm" name="confirm" required />
+          <label for="confirm">I confirm these are the items I ordered.</label>
+        </div>
+
+        <button type="submit">Confirm Order</button>
+      </form>
+    </section>
+
+    <!-- Footer -->
+    <footer>
+      <p>&copy; <%= new Date().getFullYear() %> Pesticide Supply System</p>
+    </footer>
+  </div>
+
+  <script src="/js/cart.js"></script>
+  <script>
     function validateConfirm() {
-        if (!document.getElementById('confirm').checked) {
-            alert('Please confirm your order.');
-            return false;
-        }
-        return true;
+      if (!document.getElementById('confirm').checked) {
+        alert('Please confirm your order.');
+        return false;
+      }
+      return true;
     }
-    </script>
+  </script>
 </body>
 </html>
