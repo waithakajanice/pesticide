@@ -79,7 +79,7 @@ app.use(session({
 function requireLogin(req, res, next) {
   // Allow access to login, signup, createaccount, and static files
   const openPaths = [
-    '/', '/login', '/signup', '/createaccount', '/logout'
+    '/', '/login', '/createaccount', '/logout', '/adminlogin', '/adminloginpost'
   ];
   // Allow static assets (css, js, images, etc.)
   if (
@@ -92,7 +92,8 @@ function requireLogin(req, res, next) {
   ) {
     return next();
   }
-  if (!req.session.userId) {
+  // Allow if either user or admin is logged in
+  if (!req.session.userId && !req.session.adminId) {
     return res.redirect('/');
   }
   next();
@@ -204,7 +205,6 @@ export { fetchProductsFromDB };
 // Authentication functions
 const signIn = async (email, password) => {
   try {
-    console.log("Signing in...");
     const sql = "SELECT * FROM login WHERE `email` = ? AND `password` = ?";
     const [rows] = await pool.query(sql, [email, password]);
     return rows.length > 0 ? "Success" : "";
@@ -228,7 +228,7 @@ app.get('/home', (req, res) => {
   res.render("home.ejs");
 });
 
-app.get('/admin', (req, res) => {
+app.get('/adminlogin', (req, res) => {
   res.render("admin.ejs");
 });
 
@@ -332,7 +332,6 @@ app.post("/addProduct", (req, res) => {
       console.error("Error inserting data into MySQL:", err.sqlMessage || err);
       return res.status(500).send("Error inserting data into MySQL.");
     }
-    console.log("Product added successfully:");
     res.redirect("/products");
   });
 });
@@ -354,7 +353,6 @@ app.post('/signup', (req, res) => {
       return;
     }
     
-    console.log("Account created successfully!");
     res.redirect("/");
   });
 });
@@ -371,26 +369,32 @@ app.post('/login', async (req, res) => {
   }
 });
 
-app.post("/admin", (req, res) => {
+app.post("/adminloginpost", async (req, res) => {
   const enteredName = req.body.name;
   const enteredPassword = req.body.password;
 
   const sql = "SELECT * FROM admin WHERE name = ? AND password = ?";
   const values = [enteredName, enteredPassword];
 
-  pool.query(sql, values, (err, results) => {
-    if (err) {
-      console.error('Error querying MySQL: ', err);
-      res.status(500).send('Error querying MySQL');
-      return;
-    }
-
+  try {
+    const [results] = await pool.query(sql, values);
     if (results.length > 0) {
-      res.redirect("/adminview");
+      req.session.adminId = results[0].id;
+
+      // Use await with fetchProducts
+      try {
+        const products = await fetchProducts();
+        res.render('adminview', { products });
+      } catch (error) {
+        res.status(500).send('Error fetching products');
+      }
     } else {
       res.render('admin', { error: 'Invalid username or password' });
     }
-  });
+  } catch (err) {
+    console.error('Error querying MySQL: ', err);
+    res.status(500).send('Error querying MySQL');
+  }
 });
 
 app.post("/remove", (req, res) => {

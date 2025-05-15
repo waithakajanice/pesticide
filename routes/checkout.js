@@ -131,7 +131,6 @@ router.get('/invoices', async (req, res) => {
         'SELECT * FROM orders WHERE user_id = ? ORDER BY created_at DESC',
         [userId]
     );
-    console.log(orders);
     res.render('invoices.ejs', { orders });
 });
 
