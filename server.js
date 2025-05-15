@@ -75,6 +75,32 @@ app.use(session({
   }
 }));
 
+// Middleware for login requirement (global, except auth pages)
+function requireLogin(req, res, next) {
+  // Allow access to login, signup, createaccount, and static files
+  const openPaths = [
+    '/', '/login', '/signup', '/createaccount', '/logout'
+  ];
+  // Allow static assets (css, js, images, etc.)
+  if (
+    openPaths.includes(req.path) ||
+    req.path.startsWith('/css') ||
+    req.path.startsWith('/js') ||
+    req.path.startsWith('/images') ||
+    req.path.startsWith('/public') ||
+    req.path.startsWith('/uploads')
+  ) {
+    return next();
+  }
+  if (!req.session.userId) {
+    return res.redirect('/');
+  }
+  next();
+}
+
+// Place this middleware BEFORE all your route handlers
+app.use(requireLogin);
+
 // MySQL database connection pool
 const pool = mysql.createPool({
   host: process.env.DB_HOST,
@@ -186,14 +212,6 @@ const signIn = async (email, password) => {
     console.error("Login error:", err);
     throw err;
   }
-};
-
-// Middleware for login requirement
-function requireLogin(req, res, next) {
-  if (!req.session.userId) {
-    return res.redirect('/'); // or your login page
-  }
-  next();
 }
 
 // Route handlers for views
@@ -232,7 +250,7 @@ app.get('/pay', (req, res) => {
   res.render("pay.ejs");
 });
 
-app.get('/products', requireLogin, async (req, res) => {
+app.get('/products', async (req, res) => {
   try {
     const products = await fetchProducts();
     res.render('products', { products });
@@ -291,9 +309,9 @@ app.get('/viewreviews', (req, res) => {
 });
 
 // Shopping cart and checkout routes
-app.use('/cart', requireLogin, cartRoutes);
+app.use('/cart', cartRoutes);
 app.use('/checkout', checkoutRouter);
-app.use('/checkout', requireLogin, checkoutRoutes);
+app.use('/checkout', checkoutRoutes);
 app.use('/', checkoutRouter);
 
 // Route handlers for form submissions
