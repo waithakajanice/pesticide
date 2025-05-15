@@ -1,70 +1,70 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-<title>PESTICIDES SUPPLY SYSTEM | Contacts</title>
-<meta charset="utf-8">
-<link rel="stylesheet" href="css/style.css">
-<script src="js/jquery-1.7.1.min.js"></script>
-<script src="js/superfish.js"></script>
-<script src="js/jquery.easing.1.3.js"></script>
-<script src="js/tms-0.4.1.js"></script>
-<script src="js/slider.js"></script>
-<!--[if lt IE 9]>
-<script src="js/html5.js"></script>
-<link rel="stylesheet" href="css/ie.css"> 
-<![endif]-->
-<style>
-  body{
-  .lower, .upper{
-  width: 100%;
-  flex-direction: row;
-  justify-content: center;
-  align-items: center;
-  }}
-</style>
+  <meta charset="utf-8">
+  <title>PESTICIDES SUPPLY SYSTEM | Contacts</title>
+  <link rel="stylesheet" href="css/style.css">
+  <script src="js/jquery-1.7.1.min.js"></script>
+</head>
+<body class="contacts-page">
 
-</head>
-<body>
-<div class="main-bg">
-  <!-- Header -->
-  <header>
-    <div class="inner">
-      <h1 class="images/pesticide logo.jpg"><a href="/home" style="color: black; text-decoration: none;">PESTICIDES SUPPLY SYSTEM - Agriculture company</a></h1>
-      <div class="clear"></div>
-    </div>
-  </header>
-  <!-- Content -->
-  <section id="content">
-    <div class="container_24">
-      <div class="wrapper">
-        <div class="grid_24 content-bg">
-          <div class="wrapper">
-            <article class="grid_6 suffix_1 prefix_1 alpha">       
-</head>
-<body>
-    <h2>ADMIN LOGIN:</h2>
-    <form action="/admin" method="POST" class="adminpage" >
-        <div class="upper">
-            <label for="name">NAME:</label>
-            <input name="name" type="text" required>
+  <div class="page-wrapper">
+
+    <!-- Header -->
+    <header class="main-header">
+      <div class="header-inner">
+        <h1 class="company-logo">
+          <a href="/home" class="company-logo-link">PESTICIDES SUPPLY SYSTEM</a>
+        </h1>
+        <nav class="main-navigation">
+          <ul class="nav-list">
+            <li class="nav-item">
+              <a href="/" class="nav-link">User Login</a>
+            </li>
+            <li class="nav-item active">
+              <a href="/admin" class="nav-link">Admin Login</a>
+            </li>
+            <li class="nav-item">
+              <a href="/createaccount" class="nav-link">Create Account</a>
+            </li>
+          </ul>
+        </nav>
+      </div>
+    </header>
+
+    <!-- Main Content -->
+    <main class="admin-login-section">
+      <h2 class="admin-login-heading">Admin Login</h2>
+
+      <form action="/admin" method="POST" class="admin-login-form">
+        
+        <div class="form-group form-group-name">
+          <label for="name" class="form-label">Name:</label>
+          <input type="text" id="name" name="name" class="form-input" required>
         </div>
-        <div class="lower">
-            <label for="password">PASSWORD:</label>
-            <input type="password" name="password" id="myInput" required>
-            <input type="checkbox" onclick="myFunction()">
-        </div><br>
-           <button type="submit">LOGIN</button>
-          <script>
-          function myFunction() {
-            var x = document.getElementById("myInput");
-            if (x.type === "password") {
-            x.type = "text";
-             } else {
-              x.type = "password";
-            }
-         }  
-         </script>     
-         </form>
- 
+
+        <div class="form-group form-group-password">
+          <label for="myInput" class="form-label">Password:</label>
+          <input type="password" id="myInput" name="password" class="form-input" required>
+          <div class="password-toggle-row">
+            <input type="checkbox" id="togglePassword" class="password-toggle-checkbox" onclick="togglePasswordVisibility()">
+            <label for="togglePassword" class="password-toggle-label">Show Password</label>
+          </div>
+        </div>
+
+        <button type="submit" class="form-submit-button">Login</button>
+      </form>
+    </main>
+
+  </div>
+
+  <!-- Script to toggle password visibility -->
+  <script>
+    function togglePasswordVisibility() {
+      const passwordInput = document.getElementById("myInput");
+      passwordInput.type = passwordInput.type === "password" ? "text" : "password";
+    }
+  </script>
+
 </body>
 </html>
