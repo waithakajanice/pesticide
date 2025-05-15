@@ -142,4 +142,17 @@ router.post('/add', async (req, res) => {
     }
 });
 
+// View all users and admins
+router.get('/viewuser', async (req, res) => {
+    try {
+        const [users] = await pool.query('SELECT id, fname, lname, email, created_at FROM login ORDER BY created_at DESC');
+        const [admins] = await pool.query('SELECT id, name, created_at FROM admin ORDER BY created_at DESC');
+        res.render('viewuser.ejs', { users, admins, messages: req.flash() });
+    } catch (err) {
+        console.error('Error fetching users/admins:', err);
+        req.flash('error', 'Failed to load users/admins');
+        res.redirect('/adminview');
+    }
+});
+
 export default router;
