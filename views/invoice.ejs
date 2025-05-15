@@ -49,12 +49,12 @@
           <li>
             <strong>Product:</strong> <%= item.product %> <br>
             <strong>Quantity:</strong> <%= item.quantity %> <br>
-            <strong>Price:</strong> $<%= item.price.toFixed(2) %>
+            <strong>Price:</strong> KSh <%= item.price.toFixed(2) %>
           </li>
         <% }); %>
       </ul>
 
-      <h3>Total: $<%= order.total.toFixed(2) %></h3>
+      <h3>Total: KSh <%= order.total.toFixed(2) %></h3>
 
       <p class="note">
         <em>

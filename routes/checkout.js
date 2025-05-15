@@ -49,13 +49,17 @@ router.post('/submit', async (req, res) => {
         `SELECT id, price, quantity FROM products WHERE id IN (${cartItems.map(() => '?').join(',')})`,
         cartItems.map(item => item.product_id)
     );
-    let total = 0;
     const priceMap = {};
     const stockMap = {};
     products.forEach(p => {
         priceMap[p.id] = Number(p.price);
         stockMap[p.id] = Number(p.quantity); // Use quantity for stock
     });
+
+    let total = 0;
+    for (const item of cartItems) {
+        total += priceMap[item.product_id] * item.quantity;
+    }
 
     // Check stock availability
     for (const item of cartItems) {
@@ -64,7 +68,7 @@ router.post('/submit', async (req, res) => {
         }
     }
 
-    // Insert order (now with email)
+    // Insert order (now with email and correct total)
     const [orderResult] = await pool.query(
         'INSERT INTO orders (user_id, total, name, address, email) VALUES (?, ?, ?, ?, ?)',
         [userId, total, name, address, email]
@@ -129,6 +133,20 @@ router.get('/invoices', async (req, res) => {
     );
     console.log(orders);
     res.render('invoices.ejs', { orders });
+});
+
+// Mark order as received
+router.post('/orders/:orderId/received', async (req, res) => {
+    const { orderId } = req.params;
+    await pool.query('UPDATE orders SET status = ? WHERE id = ?', ['received', orderId]);
+    res.redirect('/invoices');
+});
+
+// Cancel order
+router.post('/orders/:orderId/cancel', async (req, res) => {
+    const { orderId } = req.params;
+    await pool.query('UPDATE orders SET status = ? WHERE id = ?', ['cancelled', orderId]);
+    res.redirect('/invoices');
 });
 
 // Route to display the receipt page

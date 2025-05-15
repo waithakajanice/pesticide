@@ -46,7 +46,7 @@
             <div class="cart-item">
               <div class="item-details">
                 <h3><%= product.product %></h3>
-                <p>Price: $<%= product.price.toFixed(2) %></p>
+                <p>Price: KSh <%= product.price.toFixed(2) %></p>
                 <p>
                   Quantity:
                   <input 
@@ -57,14 +57,14 @@
                     class="quantity-input"
                   />
                 </p>
-                <p>Subtotal: $<%= itemTotal.toFixed(2) %></p>
+                <p>Subtotal: KSh <%= itemTotal.toFixed(2) %></p>
               </div>
               <button class="remove-btn" data-product-id="<%= cartItem.id %>">Remove</button>
             </div>
           <% }}); %>
 
           <div class="cart-total">
-            <h3>Total: $<span id="total-price"><%= totalPrice.toFixed(2) %></span></h3>
+            <h3>Total: KSh <span id="total-price"><%= totalPrice.toFixed(2) %></span></h3>
           </div>
           <button type="button" id="checkout-button" onclick="proceedToCheckout()">Proceed to Checkout</button>
         <% } else { %>

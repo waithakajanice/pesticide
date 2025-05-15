@@ -44,12 +44,12 @@
                 total += itemTotal;
           %>
             <li>
-              <strong><%= product.product %></strong> (x<%= cartItem.quantity %>) - $<%= itemTotal.toFixed(2) %>
+              <strong><%= product.product %></strong> (x<%= cartItem.quantity %>) - KSh <%= itemTotal.toFixed(2) %>
             </li>
           <% }}); %>
         </ul>
         <div id="total-price">
-          <strong>Total:</strong> $<%= total.toFixed(2) %>
+          <strong>Total:</strong> KSh <%= total.toFixed(2) %>
         </div>
       </div>
 
